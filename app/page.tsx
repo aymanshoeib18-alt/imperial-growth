@@ -1,5 +1,6 @@
-import LandingPage, { MAIN_HERO } from "@/components/LandingPage";
+import LandingPage from "@/components/LandingPage";
+import { HEROES } from "@/lib/heroes";
 
 export default function Home() {
-  return <LandingPage {...MAIN_HERO} />;
+  return <LandingPage {...HEROES.main} />;
 }

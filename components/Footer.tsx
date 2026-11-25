@@ -1,10 +1,17 @@
 import Link from "next/link";
 import Logo from "./Logo";
 
-export default function Footer() {
+/** `stickyPad` leaves room for the mobile sticky CTA bar on landing pages. */
+export default function Footer({
+  stickyPad = false,
+  divider = false,
+}: {
+  stickyPad?: boolean;
+  divider?: boolean;
+}) {
   const year = new Date().getFullYear();
   return (
-    <footer className="mt-auto bg-ink text-paper">
+    <footer className={`grain mt-auto bg-ink text-paper ${stickyPad ? "pb-24 md:pb-0" : ""} ${divider ? "border-t border-line-dark" : ""}`}>
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-12 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <Logo />
         <nav aria-label="Legal" className="flex gap-6 text-sm">

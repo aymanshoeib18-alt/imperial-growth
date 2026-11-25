@@ -2,7 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "@/public/logo.png";
 
-/** White "IMPERIAL" wordmark on black. Swap /public/logo.png to change it. */
+/**
+ * White wordmark on black. Swap /public/logo.png to change it.
+ * mix-blend-lighten drops the file's black background into whatever black it sits on.
+ */
 export default function Logo({ priority = false }: { priority?: boolean }) {
   return (
     <Link
@@ -14,7 +17,7 @@ export default function Logo({ priority = false }: { priority?: boolean }) {
         alt="Imperial Growth"
         priority={priority}
         sizes="160px"
-        className="h-6 w-auto sm:h-8"
+        className="h-6 w-auto mix-blend-lighten sm:h-8"
       />
     </Link>
   );

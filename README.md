@@ -80,6 +80,27 @@ To test, open `/?fbclid=test123&utm_source=test` and click a CTA. The `/apply` U
 
 ## Brand
 
-- The colours are only `#0A0A0A`, `#FFFFFF` and one grey `#6B6B6B` (secondary text, white backgrounds only). They are defined in `app/globals.css`.
-- Headlines use Cormorant Garamond and body text uses Inter, both loaded with `next/font`.
-- The logo is `/public/logo.png`. It appears in the header and footer and is used for the Open Graph image (`app/opengraph-image.tsx`). To change the logo, replace that file and keep the same name. A wide image with a black background works best.
+- **Colours:** `#0A0A0A` black, `#FFFFFF` white and `#F5F5F3` off-white. The section backgrounds alternate between them.
+- **Grey:** used only for small labels: `#6B6B6B` on light backgrounds, `#9A9A9A` on black. Tokens live in `app/globals.css`.
+- **Fonts:** headlines use Cormorant Garamond (one italic accent word per headline), and body text uses Inter at 17–18px. Both load through `next/font`.
+- **Black sections** get a subtle film grain from `public/grain.png`, a 16 KB tile.
+
+### Files you can drop in (no code changes needed)
+
+| File | What it is | Notes |
+|---|---|---|
+| `public/logo.png` | Wordmark (white on black) | Header, footer and OG image. Wide format, ~5:1. It is blended so its black background disappears into the page. |
+| `public/icon.png` | Square mark (the "I" with the arrow) | Favicon, Apple touch icon and OG image. 512×512 or larger, on black. |
+| `public/founders/ayman.jpg`, `public/founders/omar.jpg` | Founder photos | Square, at least 600×600. They're shown in black & white. Grey placeholders appear until the files exist. |
+
+**Placeholders today:** the logo and icon are stand-ins generated for the build. Replace them with the real files, push, and Vercel redeploys.
+
+### Landing page structure
+
+`components/LandingPage.tsx` is shared by `/` and the three niche routes. Each route's eyebrow, headline, accent word and phone-demo script live in `lib/heroes.ts`.
+
+- **Phone demo** (`components/PhoneDemo.tsx`): HTML/CSS only, on an 8-second loop defined in `app/globals.css` (`.demo`). The names and businesses are generic samples, so keep them that way.
+- **The "60" mark:** `components/Sixty.tsx`.
+- **Scroll reveals:** `[data-reveal]` + `components/RevealObserver.tsx`. They run once.
+- **Mobile sticky CTA:** `components/StickyCta.tsx`.
+- **Reduced motion:** every animation respects `prefers-reduced-motion`. The phone demo then shows its final state, static.

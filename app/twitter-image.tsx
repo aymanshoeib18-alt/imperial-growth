@@ -1,16 +1,14 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { publicPng } from "@/lib/brandImage";
 
 export const alt = "Imperial Growth";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Black background with the logo from /public/logo.png. Replacing the logo
-// file updates this image on the next deploy.
+// Black card with the square mark (/public/icon.png) above the wordmark
+// (/public/logo.png). Replacing either file updates this on the next deploy.
 export default async function Image() {
-  const logo = await readFile(join(process.cwd(), "public/logo.png"));
-  const src = `data:image/png;base64,${logo.toString("base64")}`;
+  const [icon, logo] = await Promise.all([publicPng("icon.png"), publicPng("logo.png")]);
   return new ImageResponse(
     (
       <div
@@ -19,12 +17,16 @@ export default async function Image() {
           height: "100%",
           background: "#0A0A0A",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          gap: 24,
         }}
       >
         {/* eslint-disable-next-line jsx-a11y/alt-text */}
-        <img src={src} width={800} height={160} style={{ objectFit: "contain" }} />
+        <img src={icon} width={260} height={260} />
+        {/* eslint-disable-next-line jsx-a11y/alt-text */}
+        <img src={logo} width={600} height={120} style={{ objectFit: "contain" }} />
       </div>
     ),
     size,

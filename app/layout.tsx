@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import MetaPixel from "@/components/MetaPixel";
 import AttributionCapture from "@/components/AttributionCapture";
+import RevealObserver from "@/components/RevealObserver";
 import { SITE_URL } from "@/lib/config";
 
 const inter = Inter({
@@ -14,6 +15,7 @@ const inter = Inter({
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["500", "600"],
+  style: ["normal", "italic"],
   variable: "--font-cormorant",
   display: "swap",
 });
@@ -57,10 +59,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${cormorant.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Scroll-reveal styles only apply once JS runs, so content is never hidden without it. */}
+        <script
+          dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }}
+        />
+      </head>
       <body className="flex min-h-dvh flex-col antialiased">
         <MetaPixel />
         <AttributionCapture />
+        <RevealObserver />
         {children}
       </body>
     </html>

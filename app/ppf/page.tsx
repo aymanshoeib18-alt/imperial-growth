@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import LandingPage from "@/components/LandingPage";
+import { HEROES } from "@/lib/heroes";
 
-const hero = {
-  eyebrow: "For ceramic coating & PPF installers",
-  headline: "Booked installs from local car owners. Not price shoppers from a lead site.",
-};
+const hero = HEROES.ppf;
 
 export const metadata: Metadata = {
   title: "Ceramic Coating & PPF Installers",

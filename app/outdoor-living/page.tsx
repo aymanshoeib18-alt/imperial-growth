@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import LandingPage from "@/components/LandingPage";
+import { HEROES } from "@/lib/heroes";
 
-const hero = {
-  eyebrow: "For deck, patio & pergola builders",
-  headline: "Your spring schedule is being booked right now. Make sure it's with you.",
-};
+const hero = HEROES.outdoorLiving;
 
 export const metadata: Metadata = {
   title: "Deck, Patio & Pergola Builders",

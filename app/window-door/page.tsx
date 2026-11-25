@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import LandingPage from "@/components/LandingPage";
+import { HEROES } from "@/lib/heroes";
 
-const hero = {
-  eyebrow: "For window & door company owners",
-  headline: "Booked in-home estimates. Not shared leads.",
-};
+const hero = HEROES.windowDoor;
 
 export const metadata: Metadata = {
   title: "Window & Door Companies",

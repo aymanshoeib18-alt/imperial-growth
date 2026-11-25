@@ -23,21 +23,25 @@ export default function ApplyButton({
     "/apply",
   );
 
+  // "dark" = solid black, for light sections. "light" = solid white, for dark sections.
   const colors =
     variant === "dark"
-      ? "bg-ink text-paper border-ink hover:bg-paper hover:text-ink"
-      : "bg-paper text-ink border-paper hover:bg-ink hover:text-paper";
+      ? "bg-ink text-paper hover:shadow-[0_8px_24px_-12px_rgba(10,10,10,0.6)]"
+      : "bg-paper text-ink hover:shadow-[0_8px_24px_-12px_rgba(255,255,255,0.35)]";
   const sizing =
     size === "small"
-      ? "h-10 px-4 text-[12px] sm:px-5 sm:text-[13px]"
-      : "h-14 px-8 text-[15px] w-full sm:w-auto";
+      ? "h-10 gap-2 px-4 text-[12px] sm:px-5 sm:text-[13px]"
+      : "h-14 gap-3 px-8 text-[15px] w-full sm:w-auto";
 
   return (
     <Link
       href={href}
-      className={`inline-flex items-center justify-center border font-medium tracking-[0.02em] transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current ${colors} ${sizing} ${className}`}
+      className={`btn inline-flex items-center justify-center font-medium tracking-[0.01em] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current ${colors} ${sizing} ${className}`}
     >
-      {children}
+      <span>{children}</span>
+      <span aria-hidden="true" className="btn-arrow">
+        →
+      </span>
     </Link>
   );
 }
