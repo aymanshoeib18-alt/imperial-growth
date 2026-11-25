@@ -3,7 +3,7 @@
 import Script from "next/script";
 import { useEffect } from "react";
 import { useClientValue } from "@/lib/useClientValue";
-import { PII_KEYS, stripPiiFromUrl } from "@/lib/pii";
+import { PII_PARAM_NAMES, stripPiiFromUrl } from "@/lib/pii";
 import { appendParams, getAttribution } from "@/lib/attribution";
 import { GHL_CALENDAR_URL, isPlaceholder } from "@/lib/config";
 
@@ -13,7 +13,7 @@ let cachedSrc: string | null | undefined;
 
 function getSrc(): string | null {
   const q = new URLSearchParams(window.location.search);
-  const hasContact = PII_KEYS.some((k) => q.has(k));
+  const hasContact = PII_PARAM_NAMES.some((k) => q.has(k));
   if (cachedSrc === undefined || hasContact) {
     const next = buildSrc();
     if (next !== cachedSrc) cachedSrc = next;
@@ -24,8 +24,12 @@ function getSrc(): string | null {
 function buildSrc(): string | null {
   if (isPlaceholder(GHL_CALENDAR_URL)) return null;
   const q = new URLSearchParams(window.location.search);
+  // Accept "amp;email" too, in case the redirect's "&" arrived HTML-escaped.
   const get = (...keys: string[]) =>
-    keys.map((k) => q.get(k)?.trim()).find(Boolean) || undefined;
+    keys
+      .flatMap((k) => [k, `amp;${k}`])
+      .map((k) => q.get(k)?.trim())
+      .find(Boolean) || undefined;
 
   const name = get("name", "full_name");
   let first = get("first_name");
