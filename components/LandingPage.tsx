@@ -459,13 +459,14 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                       style={{ "--i": i } as React.CSSProperties}
                       className="card border border-line p-7 text-center"
                     >
-                      <p className="font-serif text-6xl leading-none font-medium tracking-[-0.02em]">
+                      <p className="font-serif text-6xl leading-none font-medium tracking-[-0.02em] [font-variant-numeric:lining-nums]">
                         {r.figure}
                       </p>
                       <p className="mt-4 text-[15px] leading-snug">{r.label}</p>
-                      <p className="mt-2 text-[11px] tracking-[0.16em] text-mute uppercase">
+                      <p className="mt-3 text-[11px] font-semibold tracking-[0.16em] uppercase">
                         {r.business}
                       </p>
+                      {r.source && <p className="mt-1 text-[12px] text-mute">{r.source}</p>}
                     </li>
                   ))}
                 </ul>
@@ -485,6 +486,10 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                   ))}
                 </ul>
               )}
+              <p className="mx-auto mt-10 max-w-2xl text-center text-[12px] leading-relaxed text-mute">
+                Results from individual clients in different industries. Yours will depend on
+                your market, your offer and how quickly you call your leads.
+              </p>
             </div>
           </section>
         )}
