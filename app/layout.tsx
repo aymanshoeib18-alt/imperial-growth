@@ -21,12 +21,12 @@ const cormorant = Cormorant_Garamond({
 });
 
 const description =
-  "We run your Meta ads and reply to every new lead within 60 seconds, so you're the first company they talk to. For window & door, outdoor living and ceramic coating companies.";
+  "Stop paying for leads your competitors already called. We script and run Meta ads that bring in leads only you get, plus the system that alerts you, tracks every lead and sends the reminders.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Imperial Growth | Booked appointments, not shared leads",
+    default: "Imperial Growth | Leads only you get",
     template: "%s | Imperial Growth",
   },
   description,
@@ -35,14 +35,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Imperial Growth",
-    title: "Imperial Growth | Booked appointments, not shared leads",
+    title: "Imperial Growth | Leads only you get",
     description,
     url: "/",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Imperial Growth | Booked appointments, not shared leads",
+    title: "Imperial Growth | Leads only you get",
     description,
   },
 };

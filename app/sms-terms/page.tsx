@@ -6,7 +6,14 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LegalPage, Mail, LEGAL_ADDRESS, LEGAL_ENTITY } from "@/components/LegalPage";
+import {
+  LegalPage,
+  Mail,
+  LEGAL_ADDRESS,
+  LEGAL_BRAND,
+  LEGAL_CORP_NO,
+  LEGAL_ENTITY,
+} from "@/components/LegalPage";
 
 export const metadata: Metadata = {
   title: "SMS Terms",
@@ -17,8 +24,8 @@ export default function Page() {
   return (
     <LegalPage title="SMS Terms">
       <p>
-        These terms cover text messages (SMS) sent by Imperial Growth, a brand operated by{" "}
-        {LEGAL_ENTITY}.
+        These terms cover text messages (SMS) sent by {LEGAL_BRAND} (&ldquo;Imperial
+        Growth&rdquo;), operated by {LEGAL_ENTITY}.
       </p>
 
       <h2>What you&apos;re agreeing to</h2>
@@ -69,9 +76,11 @@ export default function Page() {
 
       <h2>Contact</h2>
       <p>
-        {LEGAL_ENTITY}, operating as Imperial Growth
+        {LEGAL_ENTITY}, operating as {LEGAL_BRAND}
         <br />
         {LEGAL_ADDRESS}
+        <br />
+        {LEGAL_CORP_NO}
         <br />
         <Mail />
       </p>

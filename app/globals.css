@@ -172,14 +172,9 @@ details[open] .faq-icon-v {
   transform: scaleY(0);
 }
 
-/* ---------- Phone demo (8s loop) ---------- */
-@property --secs {
-  syntax: "<integer>";
-  initial-value: 0;
-  inherits: false;
-}
+/* ---------- Phone demo: the lead system (10s loop) ---------- */
 .demo {
-  --loop: 8s;
+  --loop: 10s;
 }
 .demo [data-step] {
   animation-duration: var(--loop);
@@ -190,33 +185,31 @@ details[open] .faq-icon-v {
 .demo [data-step="notify"] {
   animation-name: demo-notify;
 }
-.demo [data-step="clock"] {
-  animation-name: demo-clock;
+.demo [data-step="a1"] {
+  animation-name: demo-a1;
 }
-.demo [data-step="reply"] {
-  animation-name: demo-reply;
+.demo [data-step="a2"] {
+  animation-name: demo-a2;
 }
-.demo [data-step="answer"] {
-  animation-name: demo-answer;
+.demo [data-step="a3"] {
+  animation-name: demo-a3;
 }
-.demo [data-step="booked"] {
-  animation-name: demo-booked;
+.demo [data-step="a4"] {
+  animation-name: demo-a4;
 }
-.demo .demo-secs {
-  animation: demo-count var(--loop) linear infinite both;
-  counter-reset: secs var(--secs);
+.demo [data-step="won"] {
+  animation-name: demo-won;
 }
-.demo .demo-secs::after {
-  content: "0:" counter(secs, decimal-leading-zero);
+.demo [data-step="bar"] {
+  animation-name: demo-bar;
 }
-
 @keyframes demo-notify {
   0%,
-  5% {
+  3% {
     opacity: 0;
-    transform: translateY(-110%);
+    transform: translateY(-110%) scale(1);
   }
-  11%,
+  9%,
   92% {
     opacity: 1;
     transform: none;
@@ -227,37 +220,13 @@ details[open] .faq-icon-v {
     transform: none;
   }
 }
-@keyframes demo-clock {
+@keyframes demo-a1 {
   0%,
-  9% {
+  10% {
     opacity: 0;
+    transform: translateY(10px) scale(0.97);
   }
-  12%,
-  92% {
-    opacity: 1;
-  }
-  98%,
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes demo-count {
-  0%,
-  12% {
-    --secs: 0;
-  }
-  34%,
-  100% {
-    --secs: 42;
-  }
-}
-@keyframes demo-reply {
-  0%,
-  35% {
-    opacity: 0;
-    transform: translateY(12px) scale(0.96);
-  }
-  41%,
+  16%,
   92% {
     opacity: 1;
     transform: none;
@@ -268,13 +237,13 @@ details[open] .faq-icon-v {
     transform: none;
   }
 }
-@keyframes demo-answer {
+@keyframes demo-a2 {
   0%,
-  50% {
+  26% {
     opacity: 0;
-    transform: translateY(12px) scale(0.96);
+    transform: translateY(10px) scale(0.97);
   }
-  56%,
+  32%,
   92% {
     opacity: 1;
     transform: none;
@@ -285,13 +254,13 @@ details[open] .faq-icon-v {
     transform: none;
   }
 }
-@keyframes demo-booked {
+@keyframes demo-a3 {
   0%,
-  64% {
+  42% {
     opacity: 0;
-    transform: translateY(16px) scale(0.94);
+    transform: translateY(10px) scale(0.97);
   }
-  70%,
+  48%,
   92% {
     opacity: 1;
     transform: none;
@@ -300,6 +269,66 @@ details[open] .faq-icon-v {
   100% {
     opacity: 0;
     transform: none;
+  }
+}
+@keyframes demo-a4 {
+  0%,
+  60% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  66%,
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+  98%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@keyframes demo-won {
+  0%,
+  74% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.8);
+  }
+  80%,
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+  98%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+/* Pipeline bar: New → Called → Booked → Won */
+@keyframes demo-bar {
+  0%,
+  10% {
+    transform: scaleX(0.04);
+  }
+  16%,
+  26% {
+    transform: scaleX(0.25);
+  }
+  32%,
+  42% {
+    transform: scaleX(0.5);
+  }
+  48%,
+  74% {
+    transform: scaleX(0.75);
+  }
+  80%,
+  96% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0.04);
   }
 }
 
@@ -329,8 +358,5 @@ details[open] .faq-icon-v {
   .demo [data-step] {
     opacity: 1 !important;
     transform: none !important;
-  }
-  .demo .demo-secs {
-    --secs: 42;
   }
 }

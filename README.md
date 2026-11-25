@@ -91,16 +91,22 @@ To test, open `/?fbclid=test123&utm_source=test` and click a CTA. The `/apply` U
 |---|---|---|
 | `public/logo.png` | Wordmark (white on black) | Header, footer and OG image. Wide format, ~5:1. It is blended so its black background disappears into the page. |
 | `public/icon.png` | Square mark (the "I" with the arrow) | Favicon, Apple touch icon and OG image. 512×512 or larger, on black. |
-| `public/founders/ayman.jpg`, `public/founders/omar.jpg` | Founder photos | Square, at least 600×600. They're shown in black & white. Grey placeholders appear until the files exist. |
 
 **Placeholders today:** the logo and icon are stand-ins generated for the build. Replace them with the real files, push, and Vercel redeploys.
 
 ### Landing page structure
 
-`components/LandingPage.tsx` is shared by `/` and the three niche routes. Each route's eyebrow, headline, accent word and phone-demo script live in `lib/heroes.ts`.
+`components/LandingPage.tsx` is a single general page. `/`, `/window-door`, `/outdoor-living` and `/ppf` all show it, while the three niche ad sets are tested. The niche URLs still exist so each ad set can point at its own URL and be measured separately.
 
-- **Phone demo** (`components/PhoneDemo.tsx`): HTML/CSS only, on an 8-second loop defined in `app/globals.css` (`.demo`). The names and businesses are generic samples, so keep them that way.
-- **The "60" mark:** `components/Sixty.tsx`.
+- **Hero:** the eyebrow, headline, italic accent word and phone-demo sample are in `lib/heroes.ts` (`GENERAL_HERO`). Keep the Meta ad copy matching the headline word for word. To give a niche its own hero later, add an entry there and use it in that route.
+- **Positioning:** we script and run the Meta ads, and set up the system that alerts the owner, tracks every lead and sends reminders. The owner calls the leads and closes. Nothing on the site should say we contact leads.
+- **Phone demo** (`components/PhoneDemo.tsx`): HTML/CSS only, on a 10-second loop defined in `app/globals.css` (`.demo`). It shows a new lead with an instant alert, the call, the booking, an automatic reminder and "won", with the pipeline bar advancing. The sample name is generic.
+- **Results & testimonials** (`lib/proof.ts`): the section stays hidden until you add real entries, with client permission. Never use placeholder numbers on the live site. To preview the design locally with labelled sample cards, run `PROOF_PREVIEW=1 npm run dev`.
+- **The "60" mark:** `components/Sixty.tsx`. It sits behind the problem timeline.
 - **Scroll reveals:** `[data-reveal]` + `components/RevealObserver.tsx`. They run once.
-- **Mobile sticky CTA:** `components/StickyCta.tsx`.
-- **Reduced motion:** every animation respects `prefers-reduced-motion`. The phone demo then shows its final state, static.
+- **Mobile sticky CTA:** `components/StickyCta.tsx`. It appears after the hero button scrolls away.
+- **Reduced motion:** every animation respects `prefers-reduced-motion`.
+
+### Legal entity
+
+The legal details are in `components/LegalPage.tsx`: Imperial Growth by AM Consulting, operated by Ayman & Mzyan Consulting Inc. (Ontario Corporation No. 1001447662), 46 Bradbury Road, Hamilton, ON L8J 0L1. The privacy policy, SMS terms and footer all read from there.

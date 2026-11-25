@@ -1,8 +1,10 @@
 import SimplePage from "./SimplePage";
 
 export const LEGAL_UPDATED = "November 25, 2026";
-export const LEGAL_ENTITY = "[LEGAL BUSINESS NAME]";
-export const LEGAL_ADDRESS = "[BUSINESS ADDRESS]";
+export const LEGAL_BRAND = "Imperial Growth by AM Consulting";
+export const LEGAL_ENTITY = "Ayman & Mzyan Consulting Inc.";
+export const LEGAL_ADDRESS = "46 Bradbury Road, Hamilton, ON L8J 0L1, Canada";
+export const LEGAL_CORP_NO = "Ontario Corporation No. 1001447662";
 export const SUPPORT_EMAIL = "support@imperialgrowth.co";
 
 export function LegalPage({ title, children }: { title: string; children: React.ReactNode }) {

@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
-import Image from "next/image";
 import Header from "./Header";
 import Footer from "./Footer";
 import ApplyButton from "./ApplyButton";
@@ -8,9 +5,13 @@ import PhoneDemo from "./PhoneDemo";
 import Sixty from "./Sixty";
 import StickyCta from "./StickyCta";
 import type { HeroProps } from "@/lib/heroes";
+import { getProof } from "@/lib/proof";
 
 /* ------------------------------------------------------------------ */
 /* Content                                                             */
+/* What we do: script + run the Meta ads, and set up the system that   */
+/* alerts the owner, tracks every lead and sends reminders. The owner  */
+/* calls the leads and closes the jobs. We do NOT contact leads.       */
 /* ------------------------------------------------------------------ */
 
 const timeline = [
@@ -27,44 +28,48 @@ const timeline = [
 const steps = [
   {
     icon: "megaphone",
-    title: "We build and run your ads.",
-    body: "Meta ads aimed at your service area, using 1–2 short videos you film from our script.",
+    title: "We script and run your ads.",
+    body: "Meta ads aimed at your service area, using 1–2 short videos you film from our script. Every lead they bring in is yours alone.",
   },
   {
     icon: "bolt",
-    title: "Every lead hears from us in 60 seconds.",
-    body: "An instant text and email, then a call, booking them straight onto your calendar.",
+    title: "Every lead hits your phone instantly.",
+    body: "You get an alert the moment someone fills out the form, and the lead lands in a simple pipeline so nothing slips.",
   },
   {
     icon: "calendar",
-    title: "You show up and close.",
-    body: "You get an alert the moment someone books, and reminders go out before every appointment.",
+    title: "You call, show up and close.",
+    body: "Book the appointment on your calendar. Reminders go out automatically, and you track every lead from new to won.",
   },
 ] as const;
 
 const included = [
+  "Ad scripts, shot lists and fresh creative every 2–3 weeks",
   "Ad strategy, setup and weekly optimization",
-  "Scripts, shot lists and fresh ad creative every 2–3 weeks",
-  "A lead follow-up system: instant reply, booking calendar, reminders, no-reply follow-ups",
+  "Instant new-lead alerts to your phone",
   "A simple pipeline showing every lead from new to won",
+  "A booking calendar with automatic appointment reminders",
   "A weekly results snapshot and a monthly strategy call",
-  "Optional: our team calls and books your leads for you",
 ];
 
 const comparison = [
   { row: "Who else gets the lead", them: "Several other companies", us: "Only you" },
-  { row: "Who follows up", them: "You, when you can", us: "Us, within 60 seconds" },
-  { row: "What you get", them: "A name and a phone number", us: "A booked appointment" },
+  { row: "When you hear about it", them: "Whenever you check the app", us: "Instantly, on your phone" },
+  { row: "What you get", them: "A name and a phone number", us: "A lead plus a system to track it" },
   { row: "Where your ad money goes", them: "Their platform", us: "Your own Meta account" },
 ];
 
 const fit = [
-  "Run a US window & door, outdoor living or ceramic coating/PPF company",
+  "Run an established local service business in the US",
   "Do $20K+ a month in revenue",
-  "Can take on more jobs and show up to appointments fast",
+  "Can take on more jobs and call new leads fast",
 ];
 
 const faqs = [
+  {
+    q: "Do you call the leads for me?",
+    a: "No. You get an instant alert and call them yourself. We handle the ads and the system around them.",
+  },
   {
     q: "Do I have to be on camera?",
     a: "Just 1–2 short videos. We send the script and a shot list, and a phone is enough.",
@@ -78,17 +83,11 @@ const faqs = [
     q: "What does it cost?",
     a: "It depends on your market and the plan. We'll go over it on the call.",
   },
-  { q: "Do I need a CRM?", a: "No. We set up the follow-up system for you." },
+  {
+    q: "Do I need a CRM?",
+    a: "No. We set up the system that tracks your leads and sends the reminders.",
+  },
 ];
-
-/** Founder photos: drop files at these paths and they replace the placeholders. */
-const founders = [
-  { name: "Ayman", photo: "/founders/ayman.jpg" },
-  { name: "Omar", photo: "/founders/omar.jpg" },
-].map((f) => ({
-  ...f,
-  exists: fs.existsSync(path.join(process.cwd(), "public", f.photo)),
-}));
 
 /* ------------------------------------------------------------------ */
 /* Building blocks                                                     */
@@ -111,34 +110,34 @@ function withAccent(text: string, word?: string) {
   );
 }
 
-function Label({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
-  return (
-    <p
-      className={`text-[11px] font-medium tracking-[0.16em] uppercase sm:text-xs ${
-        dark ? "text-mute-dark" : "text-mute"
-      }`}
-    >
-      {children}
-    </p>
-  );
-}
-
-function H2({
+/** Centered section header: small label + serif H2. */
+function SectionHead({
   id,
+  label,
+  dark = false,
   children,
-  className = "",
 }: {
   id: string;
+  label: string;
+  dark?: boolean;
   children: React.ReactNode;
-  className?: string;
 }) {
   return (
-    <h2
-      id={`${id}-heading`}
-      className={`mt-4 max-w-3xl font-serif text-[2.5rem] leading-[1.02] font-medium tracking-[-0.02em] text-balance sm:text-[3.5rem] lg:text-[4rem] ${className}`}
-    >
-      {children}
-    </h2>
+    <div data-reveal className="mx-auto max-w-3xl text-center">
+      <p
+        className={`text-[11px] font-medium tracking-[0.16em] uppercase sm:text-xs ${
+          dark ? "text-mute-dark" : "text-mute"
+        }`}
+      >
+        {label}
+      </p>
+      <h2
+        id={`${id}-heading`}
+        className="mt-4 font-serif text-[2.5rem] leading-[1.02] font-medium tracking-[-0.02em] text-balance sm:text-[3.5rem] lg:text-[4rem]"
+      >
+        {children}
+      </h2>
+    </div>
   );
 }
 
@@ -167,7 +166,7 @@ function StepIcon({ name }: { name: (typeof steps)[number]["icon"] }) {
     strokeLinejoin: "round" as const,
   };
   return (
-    <svg aria-hidden="true" viewBox="0 0 32 32" className="h-8 w-8">
+    <svg aria-hidden="true" viewBox="0 0 32 32" className="h-9 w-9">
       {name === "megaphone" && (
         <>
           <path {...common} d="M5 13v6h4l11 6V7L9 13H5z" />
@@ -193,62 +192,54 @@ function StepIcon({ name }: { name: (typeof steps)[number]["icon"] }) {
 
 export default function LandingPage({ eyebrow, headline, accent, demo }: HeroProps) {
   const lines = headline.split(/(?<=[.!?])\s+/);
+  const proof = getProof();
+  const hasProof = proof.results.length > 0 || proof.testimonials.length > 0;
 
   return (
     <>
-      {/* Header floats over the hero, so the two read as one black surface. */}
-      <Header overlay />
       <main id="main">
-        {/* 1. Hero: black, split, live demo */}
+        {/* 1. Hero: black, centered, live system demo underneath */}
         <section
           id="hero"
           aria-labelledby="hero-heading"
-          className="grain bg-ink pt-16 text-paper sm:pt-20 lg:flex lg:min-h-svh lg:items-center"
+          className="grain overflow-hidden bg-ink text-paper"
         >
-          <div
-            className={`${WRAP} grid items-center gap-14 pt-10 pb-16 sm:pt-14 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10 lg:py-16`}
-          >
-            <div>
-              <p className="hero-follow max-w-md text-[11px] font-medium tracking-[0.16em] text-mute-dark uppercase sm:text-xs [--i:-2]">
-                {eyebrow}
+          {/* Header lives inside the hero so the two read as one black surface. */}
+          <Header bare />
+          <div className={`${WRAP} pt-12 text-center sm:pt-20`}>
+            <p className="hero-follow mx-auto max-w-md text-[11px] font-medium tracking-[0.16em] text-mute-dark uppercase sm:text-xs [--i:-2]">
+              {eyebrow}
+            </p>
+            <h1
+              id="hero-heading"
+              className="mx-auto mt-6 max-w-5xl font-serif text-[clamp(2.9rem,8vw,6rem)] leading-[1.0] font-medium tracking-[-0.02em] text-balance"
+            >
+              {lines.map((line, i) => (
+                <span key={i} className="hero-line" style={{ "--i": i } as React.CSSProperties}>
+                  {withAccent(line, accent)}{" "}
+                </span>
+              ))}
+            </h1>
+            <p
+              className="hero-follow mx-auto mt-7 max-w-2xl text-[17px] leading-relaxed text-pretty text-paper sm:text-lg"
+              style={{ "--i": lines.length } as React.CSSProperties}
+            >
+              We script and run Meta ads that bring in leads only you get, and set up the
+              system that alerts you, tracks every lead and sends the reminders. You make the
+              call and close the job.
+            </p>
+            <div
+              id="hero-cta"
+              className="hero-follow mt-9"
+              style={{ "--i": lines.length + 1 } as React.CSSProperties}
+            >
+              <ApplyButton variant="light" />
+              <p className="mt-4 text-[13px] text-mute-dark">
+                Takes about a minute. US companies only.
               </p>
-              <h1
-                id="hero-heading"
-                className={`mt-6 font-serif leading-[1.0] font-medium tracking-[-0.02em] text-balance ${
-                  headline.length > 60
-                    ? "text-[clamp(2.5rem,6vw,4.75rem)]"
-                    : "text-[clamp(2.75rem,7.4vw,6rem)]"
-                }`}
-              >
-                {lines.map((line, i) => (
-                  <span
-                    key={i}
-                    className="hero-line"
-                    style={{ "--i": i } as React.CSSProperties}
-                  >
-                    {withAccent(line, accent)}{" "}
-                  </span>
-                ))}
-              </h1>
-              <p
-                className="hero-follow mt-7 max-w-xl text-[17px] leading-relaxed text-pretty text-paper sm:text-lg"
-                style={{ "--i": lines.length } as React.CSSProperties}
-              >
-                We run your Meta ads and reply to every new lead within 60 seconds, so you&apos;re
-                the first company they talk to. You show up and close.
-              </p>
-              <div
-                className="hero-follow mt-9"
-                style={{ "--i": lines.length + 1 } as React.CSSProperties}
-              >
-                <ApplyButton variant="light" />
-                <p className="mt-4 text-[13px] text-mute-dark">
-                  Takes about a minute. US companies only.
-                </p>
-              </div>
             </div>
             <div
-              className="hero-follow max-lg:mx-auto max-lg:w-[78%] max-lg:max-w-[280px]"
+              className="hero-follow mx-auto mt-14 w-[82%] max-w-[300px] pb-14 sm:mt-16 sm:w-full sm:max-w-[320px] sm:pb-20"
               style={{ "--i": lines.length + 2 } as React.CSSProperties}
             >
               <PhoneDemo script={demo} />
@@ -257,24 +248,18 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
         </section>
 
         {/* 2. Problem: the race, with the 60 behind it */}
-        <section
-          aria-labelledby="problem-heading"
-          className="relative overflow-hidden bg-off"
-        >
+        <section aria-labelledby="problem-heading" className="relative overflow-hidden bg-off">
           <Sixty
             label={false}
-            className="absolute -top-6 -right-16 w-[22rem] text-ink/[0.09] sm:-right-10 sm:w-[34rem] lg:right-0 lg:w-[44rem]"
+            className="absolute top-2 left-1/2 w-[24rem] -translate-x-1/2 text-ink/[0.08] sm:w-[40rem] lg:w-[52rem]"
           />
           <div className={`${WRAP} ${PAD} relative`}>
-            <div data-reveal>
-              <Label>The problem</Label>
-              <H2 id="problem">
-                You don&apos;t have a lead problem. You have a <em>speed</em> problem.
-              </H2>
-            </div>
+            <SectionHead id="problem" label="The problem">
+              You don&apos;t have a lead problem. You have a <em>sharing</em> problem.
+            </SectionHead>
 
             <figure data-reveal className="mt-12 sm:mt-16" style={{ "--i": 1 } as React.CSSProperties}>
-              <figcaption className="flex items-baseline gap-3">
+              <figcaption className="flex items-baseline justify-center gap-3">
                 <span className="text-sm font-semibold">A typical shared lead</span>
                 <span className="text-[11px] tracking-[0.16em] text-mute uppercase">
                   Illustrative
@@ -282,7 +267,6 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
               </figcaption>
 
               <ol className="relative mt-8 grid gap-0 md:grid-cols-5 md:gap-4">
-                {/* the line */}
                 <span
                   aria-hidden="true"
                   className="absolute top-2 bottom-2 left-[5px] w-px bg-ink/20 md:top-[5px] md:right-0 md:bottom-auto md:left-0 md:h-px md:w-auto"
@@ -291,27 +275,13 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                   <li key={t.time} className="relative pb-8 pl-8 md:pb-0 md:pl-0">
                     <span
                       aria-hidden="true"
-                      className={`absolute top-1 left-0 block rounded-full md:static ${
-                        t.win
-                          ? "h-[11px] w-[11px] bg-ink ring-4 ring-ink/15"
-                          : "h-[11px] w-[11px] border border-ink/40 bg-off"
+                      className={`absolute top-1 left-0 block h-[11px] w-[11px] rounded-full md:static ${
+                        t.win ? "bg-ink ring-4 ring-ink/15" : "border border-ink/40 bg-off"
                       }`}
                     />
-                    <div
-                      className={`md:mt-6 ${
-                        t.win ? "bg-ink p-4 text-paper md:-mx-1 md:-mt-0 md:translate-y-4" : ""
-                      }`}
-                    >
-                      <p
-                        className={`font-serif text-2xl leading-none font-medium ${
-                          t.win ? "" : "text-ink"
-                        }`}
-                      >
-                        {t.time}
-                      </p>
-                      <p className={`mt-3 text-[15px] leading-snug ${t.win ? "" : "text-ink"}`}>
-                        {t.text}
-                      </p>
+                    <div className={`md:mt-6 ${t.win ? "bg-ink p-4 text-paper md:-mx-1 md:translate-y-4" : ""}`}>
+                      <p className="font-serif text-2xl leading-none font-medium">{t.time}</p>
+                      <p className="mt-3 text-[15px] leading-snug">{t.text}</p>
                       {t.win && (
                         <p className="mt-3 text-[11px] tracking-[0.16em] text-mute-dark uppercase">
                           Wins the job
@@ -327,18 +297,22 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                 ))}
               </ol>
             </figure>
+
+            <p
+              data-reveal
+              className="mx-auto mt-14 max-w-2xl text-center text-[17px] leading-relaxed sm:text-lg"
+            >
+              With your own ads, there&apos;s no race. Every lead comes to you and only you.
+            </p>
           </div>
         </section>
 
         {/* 3. How it works + what's included */}
         <section aria-labelledby="how-heading" className="bg-paper">
           <div className={`${WRAP} ${PAD}`}>
-            <div data-reveal>
-              <Label>How it works</Label>
-              <H2 id="how">
-                Three steps. You only handle the <em>last</em> one.
-              </H2>
-            </div>
+            <SectionHead id="how" label="How it works">
+              Three steps. You only handle the <em>last</em> one.
+            </SectionHead>
 
             <ol className="mt-12 grid gap-4 sm:mt-14 md:grid-cols-3 md:gap-5">
               {steps.map((s, i) => (
@@ -346,19 +320,13 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                   key={s.title}
                   data-reveal
                   style={{ "--i": i } as React.CSSProperties}
-                  className="card relative flex flex-col overflow-hidden border border-line bg-paper p-6 sm:p-7"
+                  className="card flex flex-col border border-line bg-paper p-6 sm:p-7"
                 >
                   <div className="flex items-start justify-between">
                     <StepIcon name={s.icon} />
                     <span className="font-serif text-lg text-mute">0{i + 1}</span>
                   </div>
-                  {/* Equal-height visual area keeps titles aligned; step 2 carries the 60. */}
-                  <div className={`flex items-end ${i === 1 ? "h-36" : "h-6 md:h-36"}`}>
-                    {i === 1 && (
-                      <Sixty className="w-44 text-ink" labelClassName="-mt-3 text-mute" />
-                    )}
-                  </div>
-                  <h3 className="mt-6 font-serif text-[1.65rem] leading-tight font-medium">
+                  <h3 className="mt-8 font-serif text-[1.65rem] leading-tight font-medium">
                     {s.title}
                   </h3>
                   <p className="mt-3 text-[17px] leading-relaxed text-ink">{s.body}</p>
@@ -366,14 +334,11 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
               ))}
             </ol>
 
-            <div
-              data-reveal
-              className="mt-12 grid gap-8 border-t border-line pt-10 sm:mt-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12"
-            >
-              <h3 className="font-serif text-3xl leading-tight font-medium tracking-[-0.01em] text-balance sm:text-4xl">
+            <div data-reveal className="mx-auto mt-14 max-w-4xl border-t border-line pt-10 sm:mt-16">
+              <h3 className="text-center font-serif text-3xl leading-tight font-medium tracking-[-0.01em] text-balance sm:text-4xl">
                 Everything between the ad and the appointment.
               </h3>
-              <ul className="grid gap-x-8 sm:grid-cols-2">
+              <ul className="mt-8 grid gap-x-10 sm:grid-cols-2">
                 {included.map((item) => (
                   <li
                     key={item}
@@ -391,12 +356,9 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
         {/* 4. Comparison (dark) */}
         <section aria-labelledby="compare-heading" className="grain bg-ink text-paper">
           <div className={`${WRAP} ${PAD}`}>
-            <div data-reveal>
-              <Label dark>Comparison</Label>
-              <H2 id="compare">
-                Us <em>vs.</em> lead marketplaces
-              </H2>
-            </div>
+            <SectionHead id="compare" label="Comparison" dark>
+              Us <em>vs.</em> lead marketplaces
+            </SectionHead>
 
             <table className="mt-12 hidden w-full border-collapse text-left md:table">
               <thead>
@@ -476,16 +438,64 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
           </div>
         </section>
 
-        {/* 5. Who it's for */}
+        {/* 5. Results & testimonials: only rendered once real entries exist in lib/proof.ts */}
+        {hasProof && (
+          <section aria-labelledby="results-heading" className="bg-paper">
+            <div className={`${WRAP} ${PAD}`}>
+              <SectionHead id="results" label="Results">
+                What clients are <em>seeing</em>
+              </SectionHead>
+              {proof.isPreview && (
+                <p className="mt-6 text-center text-[11px] font-semibold tracking-[0.16em] text-mute uppercase">
+                  Design preview · sample content · not shown on the live site
+                </p>
+              )}
+              {proof.results.length > 0 && (
+                <ul className="mt-12 grid gap-4 sm:grid-cols-3 sm:gap-5">
+                  {proof.results.map((r, i) => (
+                    <li
+                      key={i}
+                      data-reveal
+                      style={{ "--i": i } as React.CSSProperties}
+                      className="card border border-line p-7 text-center"
+                    >
+                      <p className="font-serif text-6xl leading-none font-medium tracking-[-0.02em]">
+                        {r.figure}
+                      </p>
+                      <p className="mt-4 text-[15px] leading-snug">{r.label}</p>
+                      <p className="mt-2 text-[11px] tracking-[0.16em] text-mute uppercase">
+                        {r.business}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {proof.testimonials.length > 0 && (
+                <ul className="mx-auto mt-10 flex max-w-4xl flex-wrap justify-center gap-5">
+                  {proof.testimonials.map((t, i) => (
+                    <li key={i} data-reveal className="w-full bg-off p-7 md:w-[calc(50%-0.625rem)]">
+                      <blockquote className="font-serif text-2xl leading-snug">
+                        &ldquo;{t.quote}&rdquo;
+                      </blockquote>
+                      <p className="mt-5 text-[15px] font-semibold">{t.name}</p>
+                      <p className="text-[11px] tracking-[0.16em] text-mute uppercase">
+                        {t.business}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* 6. Who it's for */}
         <section aria-labelledby="fit-heading" className="bg-off">
           <div className={`${WRAP} ${PAD}`}>
-            <div data-reveal>
-              <Label>The fit</Label>
-              <H2 id="fit">
-                Who it&apos;s <em>for</em>
-              </H2>
-            </div>
-            <div className="mt-10 grid gap-10 sm:mt-12 md:grid-cols-[1.4fr_1fr] md:gap-14">
+            <SectionHead id="fit" label="The fit">
+              Who it&apos;s <em>for</em>
+            </SectionHead>
+            <div className="mx-auto mt-10 grid max-w-4xl gap-10 sm:mt-12 md:grid-cols-[1.4fr_1fr] md:gap-14">
               <div data-reveal>
                 <h3 className="border-b border-ink pb-3 text-xs font-semibold tracking-[0.16em] uppercase">
                   A fit if you:
@@ -512,56 +522,17 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
           </div>
         </section>
 
-        {/* 6. Who's behind it */}
-        <section aria-labelledby="founders-heading" className="bg-paper">
-          <div className={`${WRAP} ${PAD} grid items-center gap-10 md:grid-cols-[1fr_1fr] md:gap-14`}>
-            <div data-reveal>
-              <Label>Who&apos;s behind it</Label>
-              <h2
-                id="founders-heading"
-                className="mt-4 max-w-md font-serif text-3xl leading-[1.1] font-medium tracking-[-0.01em] text-balance sm:text-[2.6rem]"
-              >
-                We build the ads and the follow-up ourselves, and we <em>answer</em> your calls.
-              </h2>
-            </div>
-            <ul data-reveal className="grid grid-cols-2 gap-4 sm:gap-5" style={{ "--i": 1 } as React.CSSProperties}>
-              {founders.map((f) => (
-                <li key={f.name}>
-                  <div className="relative aspect-square overflow-hidden bg-[#e6e6e3]">
-                    {f.exists ? (
-                      <Image
-                        src={f.photo}
-                        alt={f.name}
-                        fill
-                        sizes="(min-width: 768px) 280px, 45vw"
-                        className="object-cover grayscale"
-                      />
-                    ) : (
-                      <span
-                        aria-hidden="true"
-                        className="absolute inset-0 flex items-center justify-center font-serif text-6xl text-ink/25"
-                      >
-                        {f.name[0]}
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-3 text-[15px] font-semibold">{f.name}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
         {/* 7. FAQ */}
-        <section aria-labelledby="faq-heading" className="bg-off">
-          <div className={`${WRAP} ${PAD} grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16`}>
-            <div data-reveal>
-              <Label>FAQ</Label>
-              <H2 id="faq">
-                Frequently asked <em>questions</em>
-              </H2>
-            </div>
-            <div data-reveal className="border-b border-line" style={{ "--i": 1 } as React.CSSProperties}>
+        <section aria-labelledby="faq-heading" className="bg-paper">
+          <div className={`${WRAP} ${PAD}`}>
+            <SectionHead id="faq" label="FAQ">
+              Frequently asked <em>questions</em>
+            </SectionHead>
+            <div
+              data-reveal
+              className="mx-auto mt-10 max-w-3xl border-b border-line sm:mt-12"
+              style={{ "--i": 1 } as React.CSSProperties}
+            >
               {faqs.map((f) => (
                 <details key={f.q} className="group border-t border-line">
                   <summary className="flex cursor-pointer items-center justify-between gap-6 py-5 text-[17px] font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
@@ -595,7 +566,11 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
             >
               See if your company <em>qualifies.</em>
             </h2>
-            <p data-reveal className="mx-auto mt-6 max-w-md text-[17px] leading-relaxed text-pretty sm:text-lg" style={{ "--i": 1 } as React.CSSProperties}>
+            <p
+              data-reveal
+              className="mx-auto mt-6 max-w-md text-[17px] leading-relaxed text-pretty sm:text-lg"
+              style={{ "--i": 1 } as React.CSSProperties}
+            >
               Answer a few quick questions, then pick a time for a 20-minute call.
             </p>
             <div data-reveal className="mt-10" style={{ "--i": 2 } as React.CSSProperties}>
@@ -607,7 +582,7 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
         <Footer stickyPad divider />
       </div>
 
-      <StickyCta heroId="hero" endId="page-end" />
+      <StickyCta heroId="hero-cta" endId="page-end" />
     </>
   );
 }

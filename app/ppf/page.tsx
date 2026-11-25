@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import LandingPage from "@/components/LandingPage";
-import { HEROES } from "@/lib/heroes";
+import { GENERAL_HERO } from "@/lib/heroes";
 
-const hero = HEROES.ppf;
+const hero = GENERAL_HERO;
 
 export const metadata: Metadata = {
   title: "Ceramic Coating & PPF Installers",

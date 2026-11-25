@@ -10,6 +10,8 @@ import {
   LegalPage,
   Mail,
   LEGAL_ADDRESS,
+  LEGAL_BRAND,
+  LEGAL_CORP_NO,
   LEGAL_ENTITY,
 } from "@/components/LegalPage";
 
@@ -22,10 +24,11 @@ export default function Page() {
   return (
     <LegalPage title="Privacy Policy">
       <p>
-        Imperial Growth is a brand operated by {LEGAL_ENTITY} (&ldquo;Imperial Growth,&rdquo;
-        &ldquo;we,&rdquo; &ldquo;us&rdquo;). This policy explains what information we collect
-        when you visit imperialgrowth.co, apply, or book a call with us. It also explains what
-        we do with that information and the choices you have.
+        {LEGAL_BRAND} (&ldquo;Imperial Growth,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;) is
+        operated by {LEGAL_ENTITY}, a corporation incorporated in Ontario, Canada. This policy
+        explains what information we collect when you visit imperialgrowth.co, apply, or book a
+        call with us. It also explains what we do with that information and the choices you
+        have.
       </p>
       <p>
         Our services are offered only to businesses in the United States. This website is not
@@ -161,6 +164,16 @@ export default function Page() {
         their own marketing. See our <Link href="/sms-terms">SMS Terms</Link>.
       </p>
 
+      <h2>Where your information is processed</h2>
+      <p>
+        We are based in Canada, and our service providers store and process information in the
+        United States, Canada and other countries where they operate. Your information may
+        therefore be subject to the laws of those countries, including lawful access by their
+        authorities. We handle personal information in line with Canada&apos;s Personal
+        Information Protection and Electronic Documents Act (PIPEDA) as well as the US laws
+        described below.
+      </p>
+
       <h2>How long we keep it</h2>
       <p>
         We keep application and booking records for as long as we have a business relationship
@@ -259,9 +272,11 @@ export default function Page() {
 
       <h2>Contact</h2>
       <p>
-        {LEGAL_ENTITY}, operating as Imperial Growth
+        {LEGAL_ENTITY}, operating as {LEGAL_BRAND}
         <br />
         {LEGAL_ADDRESS}
+        <br />
+        {LEGAL_CORP_NO}
         <br />
         <Mail />
       </p>

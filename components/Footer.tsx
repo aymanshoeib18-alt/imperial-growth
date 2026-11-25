@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Logo from "./Logo";
+import { LEGAL_BRAND, LEGAL_ENTITY } from "./LegalPage";
 
 /** `stickyPad` leaves room for the mobile sticky CTA bar on landing pages. */
 export default function Footer({
@@ -24,8 +25,8 @@ export default function Footer({
         </nav>
       </div>
       <div className="border-t border-line-dark">
-        <p className="mx-auto max-w-6xl px-5 py-6 text-xs sm:px-8">
-          © {year} Imperial Growth. All rights reserved.
+        <p className="mx-auto max-w-6xl px-5 py-6 text-xs leading-relaxed sm:px-8">
+          {LEGAL_BRAND}. © {year} {LEGAL_ENTITY} All rights reserved.
         </p>
       </div>
     </footer>
