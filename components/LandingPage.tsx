@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Header from "./Header";
 import Footer from "./Footer";
 import ApplyButton from "./ApplyButton";
@@ -19,7 +20,11 @@ const timeline = [
     time: "9:02 AM",
     text: "Homeowner submits a request on a lead site, which sends it to 4 companies.",
   },
-  { time: "9:03 AM", text: "The first company calls and books the estimate.", win: true },
+  {
+    time: "9:03 AM",
+    text: "The first company calls and books the estimate.",
+    win: true,
+  },
   { time: "11:40 AM", text: "Company 2 calls back.", quote: true },
   { time: "2:15 PM", text: "Company 3 calls back.", quote: true },
   { time: "Next day", text: "Company 4 calls back.", quote: true },
@@ -53,10 +58,26 @@ const included = [
 ];
 
 const comparison = [
-  { row: "Who else gets the lead", them: "Several other companies", us: "Only you" },
-  { row: "When you hear about it", them: "Whenever you check the app", us: "Instantly, on your phone" },
-  { row: "What you get", them: "A name and a phone number", us: "A lead plus a system to track it" },
-  { row: "Where your ad money goes", them: "Their platform", us: "Your own Meta account" },
+  {
+    row: "Who else gets the lead",
+    them: "Several other companies",
+    us: "Only you",
+  },
+  {
+    row: "When you hear about it",
+    them: "Whenever you check the app",
+    us: "Instantly, on your phone",
+  },
+  {
+    row: "What you get",
+    them: "A name and a phone number",
+    us: "A lead plus a system to track it",
+  },
+  {
+    row: "Where your ad money goes",
+    them: "Their platform",
+    us: "Your own Meta account",
+  },
 ];
 
 const fit = [
@@ -78,7 +99,10 @@ const faqs = [
     q: "Who pays for the ads?",
     a: "You pay Meta directly on your own card. We never hold your ad money.",
   },
-  { q: "How fast can we launch?", a: "About two weeks from the day you're onboarded." },
+  {
+    q: "How fast can we launch?",
+    a: "About two weeks from the day you're onboarded.",
+  },
   {
     q: "What does it cost?",
     a: "It depends on your market and the plan. We'll go over it on the call.",
@@ -99,7 +123,9 @@ const PAD = "py-14 sm:py-20";
 /** Wraps the first match of `word` in <em> for the italic serif accent. */
 function withAccent(text: string, word?: string) {
   if (!word) return text;
-  const i = text.search(new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`));
+  const i = text.search(
+    new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`),
+  );
   if (i < 0) return text;
   return (
     <>
@@ -143,16 +169,34 @@ function SectionHead({
 
 function CheckIcon({ className = "" }: { className?: string }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" className={`h-4 w-4 shrink-0 ${className}`}>
-      <path d="M2.5 8.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      className={`h-4 w-4 shrink-0 ${className}`}
+    >
+      <path
+        d="M2.5 8.5l3.5 3.5 7.5-8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
 
 function XIcon({ className = "" }: { className?: string }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" className={`h-3.5 w-3.5 shrink-0 ${className}`}>
-      <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      className={`h-3.5 w-3.5 shrink-0 ${className}`}
+    >
+      <path
+        d="M3.5 3.5l9 9M12.5 3.5l-9 9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
@@ -174,7 +218,9 @@ function StepIcon({ name }: { name: (typeof steps)[number]["icon"] }) {
           <path {...common} d="M24 12.5a5 5 0 010 7" />
         </>
       )}
-      {name === "bolt" && <path {...common} d="M18 3L7 18h8l-1 11 11-15h-8l1-11z" />}
+      {name === "bolt" && (
+        <path {...common} d="M18 3L7 18h8l-1 11 11-15h-8l1-11z" />
+      )}
       {name === "calendar" && (
         <>
           <rect {...common} x="5" y="7" width="22" height="20" rx="1.5" />
@@ -190,7 +236,12 @@ function StepIcon({ name }: { name: (typeof steps)[number]["icon"] }) {
 /* Page                                                                */
 /* ------------------------------------------------------------------ */
 
-export default function LandingPage({ eyebrow, headline, accent, demo }: HeroProps) {
+export default function LandingPage({
+  eyebrow,
+  headline,
+  accent,
+  demo,
+}: HeroProps) {
   const lines = headline.split(/(?<=[.!?])\s+/);
   const proof = getProof();
   const hasProof = proof.results.length > 0 || proof.testimonials.length > 0;
@@ -215,7 +266,11 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
               className="mx-auto mt-6 max-w-5xl font-serif text-[clamp(2.9rem,8vw,6rem)] leading-[1.0] font-medium tracking-[-0.02em] text-balance"
             >
               {lines.map((line, i) => (
-                <span key={i} className="hero-line" style={{ "--i": i } as React.CSSProperties}>
+                <span
+                  key={i}
+                  className="hero-line"
+                  style={{ "--i": i } as React.CSSProperties}
+                >
                   {withAccent(line, accent)}{" "}
                 </span>
               ))}
@@ -224,9 +279,9 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
               className="hero-follow mx-auto mt-7 max-w-2xl text-[17px] leading-relaxed text-pretty text-paper sm:text-lg"
               style={{ "--i": lines.length } as React.CSSProperties}
             >
-              We script and run Meta ads that bring in leads only you get, and set up the
-              system that alerts you, tracks every lead and sends the reminders. You make the
-              call and close the job.
+              We script and run Meta ads that bring in leads only you get, and
+              set up the system that alerts you, tracks every lead and sends the
+              reminders. You make the call and close the job.
             </p>
             <div
               id="hero-cta"
@@ -248,19 +303,29 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
         </section>
 
         {/* 2. Problem: the race, with the 60 behind it */}
-        <section aria-labelledby="problem-heading" className="relative overflow-hidden bg-off">
+        <section
+          aria-labelledby="problem-heading"
+          className="relative overflow-hidden bg-off"
+        >
           <Sixty
             label={false}
             className="absolute top-2 left-1/2 w-[24rem] -translate-x-1/2 text-ink/[0.08] sm:w-[40rem] lg:w-[52rem]"
           />
           <div className={`${WRAP} ${PAD} relative`}>
             <SectionHead id="problem" label="The problem">
-              You don&apos;t have a lead problem. You have a <em>sharing</em> problem.
+              You don&apos;t have a lead problem. You have a <em>sharing</em>{" "}
+              problem.
             </SectionHead>
 
-            <figure data-reveal className="mt-12 sm:mt-16" style={{ "--i": 1 } as React.CSSProperties}>
+            <figure
+              data-reveal
+              className="mt-12 sm:mt-16"
+              style={{ "--i": 1 } as React.CSSProperties}
+            >
               <figcaption className="flex items-baseline justify-center gap-3">
-                <span className="text-sm font-semibold">A typical shared lead</span>
+                <span className="text-sm font-semibold">
+                  A typical shared lead
+                </span>
                 <span className="text-[11px] tracking-[0.16em] text-mute uppercase">
                   Illustrative
                 </span>
@@ -272,15 +337,24 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                   className="absolute top-2 bottom-2 left-[5px] w-px bg-ink/20 md:top-[5px] md:right-0 md:bottom-auto md:left-0 md:h-px md:w-auto"
                 />
                 {timeline.map((t) => (
-                  <li key={t.time} className="relative pb-8 pl-8 md:pb-0 md:pl-0">
+                  <li
+                    key={t.time}
+                    className="relative pb-8 pl-8 md:pb-0 md:pl-0"
+                  >
                     <span
                       aria-hidden="true"
                       className={`absolute top-1 left-0 block h-[11px] w-[11px] rounded-full md:static ${
-                        t.win ? "bg-ink ring-4 ring-ink/15" : "border border-ink/40 bg-off"
+                        t.win
+                          ? "bg-ink ring-4 ring-ink/15"
+                          : "border border-ink/40 bg-off"
                       }`}
                     />
-                    <div className={`md:mt-6 ${t.win ? "bg-ink p-4 text-paper md:-mx-1 md:translate-y-4" : ""}`}>
-                      <p className="font-serif text-2xl leading-none font-medium">{t.time}</p>
+                    <div
+                      className={`md:mt-6 ${t.win ? "bg-ink p-4 text-paper md:-mx-1 md:translate-y-4" : ""}`}
+                    >
+                      <p className="font-serif text-2xl leading-none font-medium">
+                        {t.time}
+                      </p>
                       <p className="mt-3 text-[15px] leading-snug">{t.text}</p>
                       {t.win && (
                         <p className="mt-3 text-[11px] tracking-[0.16em] text-mute-dark uppercase">
@@ -302,7 +376,8 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
               data-reveal
               className="mx-auto mt-14 max-w-2xl text-center text-[17px] leading-relaxed sm:text-lg"
             >
-              With your own ads, there&apos;s no race. Every lead comes to you and only you.
+              With your own ads, there&apos;s no race. Every lead comes to you
+              and only you.
             </p>
           </div>
         </section>
@@ -324,17 +399,24 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                 >
                   <div className="flex items-start justify-between">
                     <StepIcon name={s.icon} />
-                    <span className="font-serif text-lg text-mute">0{i + 1}</span>
+                    <span className="font-serif text-lg text-mute">
+                      0{i + 1}
+                    </span>
                   </div>
                   <h3 className="mt-8 font-serif text-[1.65rem] leading-tight font-medium">
                     {s.title}
                   </h3>
-                  <p className="mt-3 text-[17px] leading-relaxed text-ink">{s.body}</p>
+                  <p className="mt-3 text-[17px] leading-relaxed text-ink">
+                    {s.body}
+                  </p>
                 </li>
               ))}
             </ol>
 
-            <div data-reveal className="mx-auto mt-14 max-w-4xl border-t border-line pt-10 sm:mt-16">
+            <div
+              data-reveal
+              className="mx-auto mt-14 max-w-4xl border-t border-line pt-10 sm:mt-16"
+            >
               <h3 className="text-center font-serif text-3xl leading-tight font-medium tracking-[-0.01em] text-balance sm:text-4xl">
                 Everything between the ad and the appointment.
               </h3>
@@ -354,7 +436,10 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
         </section>
 
         {/* 4. Comparison (dark) */}
-        <section aria-labelledby="compare-heading" className="grain bg-ink text-paper">
+        <section
+          aria-labelledby="compare-heading"
+          className="grain bg-ink text-paper"
+        >
           <div className={`${WRAP} ${PAD}`}>
             <SectionHead id="compare" label="Comparison" dark>
               Us <em>vs.</em> lead marketplaces
@@ -370,7 +455,10 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                   >
                     Lead marketplaces
                   </th>
-                  <th scope="col" className="w-[36%] pb-5 text-xs font-medium tracking-[0.16em] uppercase">
+                  <th
+                    scope="col"
+                    className="w-[36%] pb-5 text-xs font-medium tracking-[0.16em] uppercase"
+                  >
                     Imperial Growth
                   </th>
                 </tr>
@@ -383,7 +471,10 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                     style={{ "--i": i + 1 } as React.CSSProperties}
                     className="border-b border-line-dark"
                   >
-                    <th scope="row" className="py-6 pr-6 align-middle text-[15px] font-normal text-mute-dark">
+                    <th
+                      scope="row"
+                      className="py-6 pr-6 align-middle text-[15px] font-normal text-mute-dark"
+                    >
                       {c.row}
                     </th>
                     <td className="py-6 pr-6 align-middle text-[17px]">
@@ -425,7 +516,9 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                       </p>
                     </div>
                     <div>
-                      <p className="text-[10px] tracking-[0.14em] uppercase">Imperial Growth</p>
+                      <p className="text-[10px] tracking-[0.14em] uppercase">
+                        Imperial Growth
+                      </p>
                       <p className="mt-1.5 flex gap-2 font-serif text-xl leading-snug font-semibold">
                         <CheckIcon className="mt-1" />
                         {c.us}
@@ -466,7 +559,9 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                       <p className="mt-3 text-[11px] font-semibold tracking-[0.16em] uppercase">
                         {r.business}
                       </p>
-                      {r.source && <p className="mt-1 text-[12px] text-mute">{r.source}</p>}
+                      {r.source && (
+                        <p className="mt-1 text-[12px] text-mute">{r.source}</p>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -474,7 +569,11 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
               {proof.testimonials.length > 0 && (
                 <ul className="mx-auto mt-10 flex max-w-4xl flex-wrap justify-center gap-5">
                   {proof.testimonials.map((t, i) => (
-                    <li key={i} data-reveal className="w-full bg-off p-7 md:w-[calc(50%-0.625rem)]">
+                    <li
+                      key={i}
+                      data-reveal
+                      className="w-full bg-off p-7 md:w-[calc(50%-0.625rem)]"
+                    >
                       <blockquote className="font-serif text-2xl leading-snug">
                         &ldquo;{t.quote}&rdquo;
                       </blockquote>
@@ -486,9 +585,71 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                   ))}
                 </ul>
               )}
+              {proof.gallery.length > 0 && (
+                <div className="mt-16">
+                  <p
+                    data-reveal
+                    className="text-center text-[11px] font-medium tracking-[0.16em] text-mute uppercase sm:text-xs"
+                  >
+                    Straight from the dashboards
+                  </p>
+                  <div className="mt-6 grid gap-4 sm:gap-5 lg:grid-cols-3">
+                    {proof.gallery.map((g, i) => (
+                      <figure
+                        key={g.id}
+                        data-reveal
+                        style={{ "--i": i } as React.CSSProperties}
+                        className={`card flex flex-col border border-line bg-off p-3 sm:p-4 ${
+                          g.id === "meta" || g.id === "stripe"
+                            ? "lg:col-span-2"
+                            : ""
+                        }`}
+                      >
+                        <div
+                          className={`grid flex-1 items-center gap-3 ${
+                            g.shots.length > 1 ? "sm:grid-cols-2" : ""
+                          }`}
+                        >
+                          {g.shots.map((shot) => (
+                            <div key={shot.src}>
+                              {shot.tag && (
+                                <p className="mb-2 text-[10px] font-semibold tracking-[0.14em] uppercase">
+                                  {shot.tag}
+                                </p>
+                              )}
+                              <a
+                                href={shot.src}
+                                target="_blank"
+                                rel="noopener"
+                                className="relative block overflow-hidden bg-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                              >
+                                <Image
+                                  src={shot.src}
+                                  width={shot.width}
+                                  height={shot.height}
+                                  alt={shot.alt}
+                                  sizes="(min-width: 1024px) 760px, 100vw"
+                                  className="h-auto w-full"
+                                />
+                                <span className="sr-only">
+                                  (opens full size)
+                                </span>
+                              </a>
+                            </div>
+                          ))}
+                        </div>
+                        <figcaption className="mt-3 text-[12px] leading-snug text-mute">
+                          {g.caption}
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                </div>
+              )}
               <p className="mx-auto mt-10 max-w-2xl text-center text-[12px] leading-relaxed text-mute">
-                Results from individual clients in different industries. Yours will depend on
-                your market, your offer and how quickly you call your leads.
+                Results from individual clients in different industries. Yours
+                will depend on your market, your offer and how quickly you call
+                your leads.
               </p>
             </div>
           </section>
@@ -507,7 +668,10 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                 </h3>
                 <ul>
                   {fit.map((f) => (
-                    <li key={f} className="flex gap-3 border-b border-line py-4 text-[17px] leading-snug">
+                    <li
+                      key={f}
+                      className="flex gap-3 border-b border-line py-4 text-[17px] leading-snug"
+                    >
                       <CheckIcon className="mt-1" />
                       <span>{f}</span>
                     </li>
@@ -520,7 +684,10 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                 </h3>
                 <p className="flex gap-3 py-4 text-[17px] leading-snug">
                   <XIcon className="mt-1 text-mute" />
-                  <span>Run a handyman, mobile detailing, body shop or car wash business.</span>
+                  <span>
+                    Run a handyman, mobile detailing, body shop or car wash
+                    business.
+                  </span>
                 </p>
               </div>
             </div>
@@ -542,8 +709,16 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                 <details key={f.q} className="group border-t border-line">
                   <summary className="flex cursor-pointer items-center justify-between gap-6 py-5 text-[17px] font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
                     <h3>{f.q}</h3>
-                    <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4 shrink-0">
-                      <path d="M1 8h14" stroke="currentColor" strokeWidth="1.25" />
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 16 16"
+                      className="h-4 w-4 shrink-0"
+                    >
+                      <path
+                        d="M1 8h14"
+                        stroke="currentColor"
+                        strokeWidth="1.25"
+                      />
                       <path
                         className="faq-icon-v origin-center transition-transform duration-200"
                         d="M8 1v14"
@@ -552,7 +727,9 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
                       />
                     </svg>
                   </summary>
-                  <p className="max-w-xl pb-6 text-[17px] leading-relaxed text-ink">{f.a}</p>
+                  <p className="max-w-xl pb-6 text-[17px] leading-relaxed text-ink">
+                    {f.a}
+                  </p>
                 </details>
               ))}
             </div>
@@ -562,7 +739,10 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
 
       {/* 8. Final CTA + footer (sticky bar hides while these are on screen) */}
       <div id="page-end">
-        <section aria-labelledby="cta-heading" className="grain bg-ink text-paper">
+        <section
+          aria-labelledby="cta-heading"
+          className="grain bg-ink text-paper"
+        >
           <div className={`${WRAP} py-20 text-center sm:py-28`}>
             <h2
               id="cta-heading"
@@ -576,11 +756,18 @@ export default function LandingPage({ eyebrow, headline, accent, demo }: HeroPro
               className="mx-auto mt-6 max-w-md text-[17px] leading-relaxed text-pretty sm:text-lg"
               style={{ "--i": 1 } as React.CSSProperties}
             >
-              Answer a few quick questions, then pick a time for a 20-minute call.
+              Answer a few quick questions, then pick a time for a 20-minute
+              call.
             </p>
-            <div data-reveal className="mt-10" style={{ "--i": 2 } as React.CSSProperties}>
+            <div
+              data-reveal
+              className="mt-10"
+              style={{ "--i": 2 } as React.CSSProperties}
+            >
               <ApplyButton variant="light" />
-              <p className="mt-4 text-[13px] text-mute-dark">Takes about a minute. US companies only.</p>
+              <p className="mt-4 text-[13px] text-mute-dark">
+                Takes about a minute. US companies only.
+              </p>
             </div>
           </div>
         </section>

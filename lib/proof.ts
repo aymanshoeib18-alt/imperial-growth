@@ -53,6 +53,77 @@ export const testimonials: Testimonial[] = [
   },
 ];
 
+/**
+ * Screenshots shown under the stat cards (files in /public/results).
+ * Cropped to the part that proves the result: no customer names, refunds,
+ * failed payments or internal notes. Never publish an uncropped original.
+ */
+export type Shot = { src: string; width: number; height: number; alt: string; tag?: string };
+export type ProofImage = {
+  id: "meta" | "stripe" | "dashboard" | "chat";
+  shots: Shot[];
+  caption: string;
+};
+
+export const gallery: ProofImage[] = [
+  {
+    id: "meta",
+    caption: "E-commerce client · Meta Ads Manager performance overview, lifetime (recreated from the account)",
+    shots: [
+      {
+        src: "/results/meta-overview-ecommerce.png",
+        width: 1540,
+        height: 804,
+        alt: "Meta Ads Manager performance overview: 421 website purchases, $40.79 per purchase, 9.49 purchase ROAS",
+      },
+    ],
+  },
+  {
+    id: "dashboard",
+    caption: "Ali Chaudhary · Sales dashboard, Aug 30 – Sep 16, 2026",
+    shots: [
+      {
+        src: "/results/sales-dashboard-aug-sep-2026.png",
+        width: 520,
+        height: 534,
+        alt: "Sales dashboard: $61,000 contracted, 21 sets booked, 13 calls taken, 11 closes",
+      },
+    ],
+  },
+  {
+    id: "stripe",
+    caption: "Ali Chaudhary · Stripe, before and after",
+    shots: [
+      {
+        src: "/results/stripe-aug-sep-2026.png",
+        width: 335,
+        height: 162,
+        alt: "Stripe, Aug 30 to Sep 15 2026: gross volume $40,518, MRR $8,416.58",
+        tag: "Aug 30 – Sep 15",
+      },
+      {
+        src: "/results/stripe-oct-2026.png",
+        width: 341,
+        height: 165,
+        alt: "Stripe, October 2026: gross volume $72,721, up 77.06% on the previous period; MRR $22,416.58, up 45.41%",
+        tag: "October · +77%",
+      },
+    ],
+  },
+  {
+    id: "chat",
+    caption: "Ali Chaudhary · message to the team",
+    shots: [
+      {
+        src: "/results/ali-testimonial.png",
+        width: 639,
+        height: 327,
+        alt: "Chat message from Ali Chaudhary: Dream team right here. Not far from $1m/mo boys. We're gonna change the entire medical industry.",
+      },
+    ],
+  },
+];
+
 const previewResults: Result[] = [
   { figure: "00", label: "Example: booked estimates in month one", business: "Sample client" },
   { figure: "$0", label: "Example: cost per lead", business: "Sample client" },
@@ -71,6 +142,7 @@ export function getProof() {
   return {
     results: results.length ? results : preview ? previewResults : [],
     testimonials: testimonials.length ? testimonials : preview ? previewTestimonials : [],
+    gallery: results.length || testimonials.length ? gallery : [],
     isPreview: preview && !results.length && !testimonials.length,
   };
 }
