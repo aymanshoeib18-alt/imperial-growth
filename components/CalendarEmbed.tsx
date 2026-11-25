@@ -1,9 +1,25 @@
 "use client";
 
 import Script from "next/script";
+import { useEffect } from "react";
 import { useClientValue } from "@/lib/useClientValue";
+import { PII_KEYS, stripPiiFromUrl } from "@/lib/pii";
 import { appendParams, getAttribution } from "@/lib/attribution";
 import { GHL_CALENDAR_URL, isPlaceholder } from "@/lib/config";
+
+// The embed URL is rebuilt only when the address bar carries contact details,
+// so stripping them afterwards doesn't reload the iframe without them.
+let cachedSrc: string | null | undefined;
+
+function getSrc(): string | null {
+  const q = new URLSearchParams(window.location.search);
+  const hasContact = PII_KEYS.some((k) => q.has(k));
+  if (cachedSrc === undefined || hasContact) {
+    const next = buildSrc();
+    if (next !== cachedSrc) cachedSrc = next;
+  }
+  return cachedSrc;
+}
 
 function buildSrc(): string | null {
   if (isPlaceholder(GHL_CALENDAR_URL)) return null;
@@ -35,7 +51,14 @@ function buildSrc(): string | null {
  * (sent by the Tally redirect) so the booking attaches to the same contact.
  */
 export default function CalendarEmbed() {
-  const src = useClientValue<string | null>(buildSrc, null);
+  const src = useClientValue<string | null>(getSrc, null);
+
+  // Once the calendar has the contact details, take them out of the address
+  // bar (fbclid/utm stay). Runs even if the calendar URL isn't set yet.
+  useEffect(() => {
+    getSrc();
+    stripPiiFromUrl();
+  }, []);
 
   if (isPlaceholder(GHL_CALENDAR_URL)) {
     return (

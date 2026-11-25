@@ -13,7 +13,7 @@ It deploys on Vercel at **imperialgrowth.co**.
 | `/book` | GoHighLevel calendar embed |
 | `/confirmed` | "You're booked" page |
 | `/not-a-fit` | Polite decline |
-| `/privacy-policy`, `/sms-terms` | **Placeholders.** Edit `app/privacy-policy/page.tsx` and `app/sms-terms/page.tsx` |
+| `/privacy-policy`, `/sms-terms` | Legal text in `app/privacy-policy/page.tsx` and `app/sms-terms/page.tsx`. Fill in `[LEGAL BUSINESS NAME]` / `[BUSINESS ADDRESS]` in `components/LegalPage.tsx` and get a lawyer to review |
 
 Every CTA uses `components/ApplyButton.tsx` and goes to `/apply`.
 
@@ -61,6 +61,14 @@ npm run build    # production build
 - Fires `PageView` on client-side route changes (via `usePathname`). It skips the first load, so a page is never counted twice.
 - Includes the `<noscript>` image fallback. There is no consent, geo or GPC gating.
 - **Lead and Schedule are NOT fired in the browser.** They are sent server-side from GoHighLevel via the Conversions API.
+
+**Keeping contact details out of Meta** (`lib/pii.ts`)
+- The pixel reports the page URL to Meta, so email, phone and name must never sit in a URL while it runs.
+- `/book` gets `name` / `email` / `phone` from the Tally redirect. The pixel never loads or fires there. Schedule comes server-side from GHL instead. The page hands those values to the calendar and then removes them from the address bar with `history.replaceState`. `fbclid` and the `utm_*` params stay.
+- Every other page removes those params as soon as it loads, before the pixel's first PageView. This covers someone who lands on, say, `/confirmed?email=…`.
+- The pixel is set with `fbq.disablePushState = true`, so Meta doesn't auto-fire extra PageViews when the URL changes.
+- ⚠️ **Never set a Meta Pixel ID on the GHL calendar or its booking widget** (or the GHL funnel/site the calendar sits in). The calendar iframe's URL contains the contact's name, email and phone, and a pixel there would send them to Meta in plain text. Schedule is already sent via the Conversions API.
+- Don't add a Meta Pixel to the Tally form either. The site pixel plus the server-side Lead event cover it.
 
 **Attribution pass-through** (`lib/attribution.ts`)
 - When a visitor lands, `fbclid`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content` and `utm_term` are saved to sessionStorage. A new ad click with fresh params replaces the old set.
