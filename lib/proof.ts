@@ -115,10 +115,10 @@ export const gallery: ProofImage[] = [
     caption: "Ali Chaudhary · message to the team",
     shots: [
       {
-        src: "/results/ali-testimonial.png",
+        src: "/results/ali-message.png",
         width: 639,
-        height: 327,
-        alt: "Chat message from Ali Chaudhary: Dream team right here. Not far from $1m/mo boys. We're gonna change the entire medical industry.",
+        height: 196,
+        alt: "Chat message from Ali Chaudhary: Dream team right here. Not far from $1m/mo boys. We're gonna change the entire medical industry,",
       },
     ],
   },
