@@ -83,9 +83,9 @@ export const gallery: ProofImage[] = [
     caption: "Ali Chaudhary · Sales dashboard, Aug 30 – Sep 16, 2026",
     shots: [
       {
-        src: "/results/sales-dashboard-aug-sep-2026.png",
-        width: 520,
-        height: 534,
+        src: "/results/sales-dashboard-aug-sep-2026-v2.webp",
+        width: 800,
+        height: 824,
         alt: "Sales dashboard: $61,000 contracted, 21 sets booked, 13 calls taken, 11 closes",
       },
     ],
@@ -95,16 +95,16 @@ export const gallery: ProofImage[] = [
     caption: "Ali Chaudhary · Stripe, before and after",
     shots: [
       {
-        src: "/results/stripe-aug-sep-2026.png",
-        width: 335,
-        height: 162,
+        src: "/results/stripe-aug-sep-2026-v2.webp",
+        width: 512,
+        height: 248,
         alt: "Stripe, Aug 30 to Sep 15 2026: gross volume $40,518, MRR $8,416.58",
         tag: "Aug 30 – Sep 15",
       },
       {
-        src: "/results/stripe-oct-2026.png",
-        width: 341,
-        height: 165,
+        src: "/results/stripe-oct-2026-v2.webp",
+        width: 518,
+        height: 247,
         alt: "Stripe, October 2026: gross volume $72,721, up 77.06% on the previous period; MRR $22,416.58, up 45.41%",
         tag: "October · +77%",
       },
@@ -115,9 +115,9 @@ export const gallery: ProofImage[] = [
     caption: "Ali Chaudhary · message to the team",
     shots: [
       {
-        src: "/results/ali-message.png",
-        width: 639,
-        height: 196,
+        src: "/results/ali-message-v2.webp",
+        width: 800,
+        height: 244,
         alt: "Chat message from Ali Chaudhary: Dream team right here. Not far from $1m/mo boys. We're gonna change the entire medical industry,",
       },
     ],

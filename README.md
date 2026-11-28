@@ -11,7 +11,8 @@ It deploys on Vercel at **imperialgrowth.co**.
 | `/window-door`, `/outdoor-living`, `/ppf` | Same page with a different eyebrow and headline (`components/LandingPage.tsx`, hero props set in each `app/<route>/page.tsx`) |
 | `/apply` | Tally form embed |
 | `/book` | GoHighLevel calendar embed |
-| `/confirmed` | "You're booked" page |
+| `/confirmed` | Pre-call page shown after someone books (`public/precall.html`, images in `public/precall/`). Static HTML served by a rewrite in `next.config.ts`. Strips name/email/phone from the URL before the Meta Pixel (PageView) loads |
+| `/onboarding` | New-client onboarding walkthrough (`public/onboarding.html`, images in `public/onboarding-assets/`). No Meta Pixel. Per-client link: `/onboarding?n=FirstName&c=<GHL agreement link>` (keep `c=` last). `c=` links are only shown if they're on leadconnectorhq.com, gohighlevel.com, msgsndr.com or imperialgrowth.co — edit `CONTRACT_HOSTS` in the file to allow another host. Other settings (Tally ID, kickoff calendar, Meta business ID, videos) are in the `CONFIG` block at the bottom of the file |
 | `/not-a-fit` | Polite decline |
 | `/privacy-policy`, `/sms-terms` | Legal text in `app/privacy-policy/page.tsx` and `app/sms-terms/page.tsx`. Fill in `[LEGAL BUSINESS NAME]` / `[BUSINESS ADDRESS]` in `components/LegalPage.tsx` and get a lawyer to review |
 

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Source: client onboarding page. Served at /onboarding via next.config.ts rewrites. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Welcome to Imperial Growth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* VOICE  calm, private, premium: a quiet room before the work starts
+   IDEA   a guided welcome ritual, one card on the desk at a time
+   PICTURE a glowing orb on a silver mist; later the real things we build float in the air
+   COLOUR silver-blue mist, ink, one red-orange accent for actions and "No"
+   TYPE   Cormorant Garamond headlines, Inter for everything you act on
+   LAYOUT one full-screen scene per step, rail left, sound bottom-left, action bottom-right */
+:root{color-scheme:light;--ink:#14161c;--mute:#5b6274;--acc:#e8452c;--acc2:#ff6a3d;--line:rgba(20,22,28,.12);--glass:rgba(255,255,255,.58);--ease:cubic-bezier(.16,1,.3,1)}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%;width:100%;overflow:hidden}
+body{margin:0;color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;background:#e4e8f1;overflow:hidden;-webkit-font-smoothing:antialiased}
+button,a{font:inherit;color:inherit}
+.serif{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;letter-spacing:-.02em}
+
+/* mist */
+.mesh{position:fixed;inset:0;z-index:0;overflow:hidden}
+.mesh i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.95;animation:drift var(--t,36s) ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(var(--x,8vw),var(--y,6vh)) scale(1.15)}}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.35;mix-blend-mode:soft-light;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .8 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+/* chrome */
+.rail{position:fixed;left:26px;top:28px;bottom:28px;z-index:5;display:flex;flex-direction:column;align-items:center;gap:18px;pointer-events:none}
+.rail .wm{writing-mode:vertical-rl;font:600 13px/1 "Cormorant Garamond",serif;letter-spacing:.42em;color:var(--ink)}
+.top{position:fixed;right:28px;top:26px;z-index:5;display:flex;gap:8px;align-items:center;font:500 12px Inter;color:var(--mute)}
+.top[hidden]{display:none}
+.dots{display:flex;gap:6px}
+.dots b{width:26px;height:4px;border-radius:4px;background:rgba(20,22,28,.14);transition:background .4s}
+.dots b.on{background:var(--ink)}.dots b.ok{background:var(--acc)}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:18px max(28px,env(safe-area-inset-right)) max(22px,env(safe-area-inset-bottom)) max(28px,env(safe-area-inset-left));pointer-events:none}
+.bar>*{pointer-events:auto}
+.snd{display:flex;align-items:center;gap:10px;background:none;border:0;cursor:pointer;font:600 11px Inter;letter-spacing:.14em;color:var(--mute);padding:10px 6px;min-height:44px}
+.snd .eq{display:flex;gap:2px;align-items:flex-end;height:12px}
+.snd .eq i{width:2px;background:var(--mute);height:3px;border-radius:1px}
+.snd.on .eq i{animation:eq 1s ease-in-out infinite}.snd.on .eq i:nth-child(2){animation-delay:.2s}.snd.on .eq i:nth-child(3){animation-delay:.45s}.snd.on .eq i:nth-child(4){animation-delay:.1s}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}
+.acts{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 22px;border-radius:99px;border:1.5px solid var(--acc);background:transparent;color:var(--acc);font:600 12px Inter;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background .25s,color .25s,transform .25s var(--ease)}
+.btn:hover{background:var(--acc);color:#fff}
+.btn.fill{background:var(--acc);color:#fff;box-shadow:0 14px 30px -12px rgba(232,69,44,.7)}
+.btn.fill:hover{background:#d63a22}
+.btn.ghost{border-color:transparent;color:var(--mute)}.btn.ghost:hover{background:rgba(20,22,28,.06);color:var(--ink)}
+.btn:focus-visible,.snd:focus-visible,.copy:focus-visible,.chk:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.btn[hidden]{display:none}
+
+/* scenes */
+.stage{position:fixed;inset:0;z-index:2}
+.slide{position:absolute;inset:0;padding:84px clamp(28px,7vw,110px) 104px;display:grid;align-items:center;visibility:hidden;opacity:0;overflow-y:auto;transition:opacity .7s ease,filter .7s ease,transform .8s var(--ease),visibility 0s .8s}
+.slide.on{visibility:visible;opacity:1;transition:opacity .7s ease .15s,filter .7s ease .15s,transform .8s var(--ease) .15s,visibility 0s}
+.slide.gone{filter:blur(12px);transform:translateY(-24px) scale(.98)}
+.slide [data-r]{opacity:0;transform:translateY(22px);filter:blur(8px)}
+.slide.on [data-r]{animation:rise 1s var(--ease) both;animation-delay:calc(.25s + var(--d,0) * .14s)}
+@keyframes rise{to{opacity:1;transform:none;filter:none}}
+h1,h2{margin:0;font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;letter-spacing:-.025em;line-height:.98;text-wrap:balance}
+h1{font-size:clamp(52px,8vw,112px)}
+h2{font-size:clamp(40px,5.4vw,72px)}
+h2 em,h1 em{font-style:italic}
+.lead{font-size:17px;color:var(--mute);max-width:46ch;margin:18px 0 0}
+.kick{font:600 11px Inter;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin:0 0 16px}
+.two{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,80px);align-items:center;max-width:1240px;width:100%;margin:0 auto}
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(26px) saturate(1.2);backdrop-filter:blur(26px) saturate(1.2);border:1px solid rgba(255,255,255,.85);border-radius:24px;box-shadow:0 40px 90px -40px rgba(38,48,90,.45)}
+
+/* intro */
+.orb{position:absolute;left:50%;top:50%;width:min(44vw,500px,58vh);aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none}
+.orb::before{content:"";position:absolute;inset:-22%;border-radius:50%;background:conic-gradient(from 0deg,#050506,#2a2c33,#7a808d,#16171c,#454955,#0c0d10,#050506);filter:blur(42px);animation:spin 16s linear infinite,breathe 6s ease-in-out infinite;opacity:.9}
+.orb::after{content:"";position:absolute;inset:4%;border-radius:50%;background:radial-gradient(circle,#fff 58%,rgba(255,255,255,.7) 66%,rgba(255,255,255,0) 74%);box-shadow:inset 0 0 40px rgba(255,255,255,.6)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes breathe{50%{scale:1.07}}
+.slide.on .orb{animation:bloom 1.6s var(--ease) both}
+@keyframes bloom{from{opacity:0;scale:.6;filter:blur(20px)}to{opacity:1;scale:1;filter:none}}
+.intro .orb{left:66%}
+.intro h1{position:relative;z-index:2;max-width:9.5ch}
+.orb.sm{position:relative;left:auto;top:auto;transform:none;width:clamp(150px,18vw,210px);margin:0 auto 40px}
+.intro .lead{position:relative;z-index:2;max-width:30ch}
+
+/* "No" list */
+.nos{list-style:none;margin:26px 0 0;padding:0;font:500 clamp(30px,3.6vw,46px)/1.12 "Cormorant Garamond",serif;letter-spacing:-.02em}
+.nos li b{color:var(--acc);font-weight:500}
+.nos li.blur{filter:blur(3px);opacity:.55}
+.center{max-width:760px;margin:0 auto;text-align:center}
+.center .nos{display:inline-block;text-align:left}
+.mark{display:block;margin:0 auto 12px;color:var(--ink)}
+
+/* floating build */
+.float{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.float .card{left:0;top:0;opacity:0;will-change:transform,opacity}
+.card.ad{width:160px}.card.txt{width:210px}.card.pipe{width:190px}
+.card{position:absolute;padding:12px;border-radius:16px;background:#fff;box-shadow:0 30px 60px -28px rgba(30,40,80,.5);animation:bob var(--t,9s) ease-in-out infinite alternate}
+@keyframes bob{to{translate:0 -14px}}
+.card img{display:block;width:100%;border-radius:10px}
+.tag{position:absolute;right:-10px;bottom:16px;background:var(--acc);color:#fff;font:600 11px Inter;border-radius:99px;padding:5px 10px;white-space:nowrap}
+.card small{display:block;font:600 10px Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+.msg{font:400 13px/1.4 Inter;background:#f1f3f7;border-radius:14px 14px 14px 4px;padding:9px 11px;margin-top:6px}
+.lp .h{font:500 20px/1.05 "Cormorant Garamond",serif}.lp .ln{height:7px;border-radius:4px;background:#e6e9f0;margin-top:7px}.lp .cta{margin-top:10px;height:26px;border-radius:99px;background:var(--acc)}
+.pipe div{display:flex;justify-content:space-between;font:500 12px Inter;padding:6px 0;border-top:1px solid #eef0f4}.pipe div:first-of-type{border:0}.pipe b{font-weight:600;color:var(--acc)}
+.mid{position:relative;z-index:2;text-shadow:0 0 24px rgba(228,232,241,.9),0 0 8px rgba(228,232,241,.9)}
+.note{font:500 12px Inter;color:var(--mute)}
+
+/* step panels */
+.panel{padding:22px;position:relative}
+.panel iframe{display:block;width:100%;height:min(60vh,600px);border:0;border-radius:14px;background:rgba(255,255,255,.6)}
+.empty{height:min(52vh,460px);border:1.5px dashed rgba(20,22,28,.22);border-radius:14px;display:grid;place-items:center;text-align:center;padding:24px;color:var(--mute)}
+.empty b{display:block;font:500 30px/1.1 "Cormorant Garamond",serif;color:var(--ink);margin-bottom:6px}
+.out{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;font-size:14px;color:var(--mute)}
+.out a{color:var(--ink);font-weight:500}
+.chk{display:inline-flex;align-items:center;gap:10px;background:none;border:0;cursor:pointer;font:500 14px Inter;color:var(--ink);min-height:44px;padding:0}
+.chk i{width:22px;height:22px;border-radius:7px;border:1.5px solid rgba(20,22,28,.35);display:grid;place-items:center;transition:.25s}
+.chk.ok i{background:var(--acc);border-color:var(--acc)}
+.chk i svg{opacity:0}.chk.ok i svg{opacity:1}
+
+/* slack */
+.sl{padding:0;overflow:hidden}
+.sl .hd{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line);font:600 15px Inter}
+.sl .bd{padding:10px 20px 20px}
+.sm{display:flex;gap:12px;padding:12px 0}
+.av{flex:none;width:36px;height:36px;border-radius:10px;background:var(--ink);color:#fff;display:grid;place-items:center;font:600 18px "Cormorant Garamond",serif}
+.av.y{background:#d9dde8;color:var(--ink);font:600 14px Inter}
+.sm b{font:600 14px Inter}.sm time{font:400 12px Inter;color:var(--mute);margin-left:6px}.sm p{margin:2px 0 0;font-size:14px}
+.big{margin-top:28px}
+
+/* meta steps */
+.ms{list-style:none;margin:0;padding:6px 4px;counter-reset:s}
+.ms li{counter-increment:s;display:grid;grid-template-columns:34px minmax(0,1fr);gap:14px;padding:13px 0;border-top:1px solid var(--line);font-size:15px}
+.ms li:first-child{border:0}
+.ms li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font:600 13px Inter}
+.ms code{font:600 14px ui-monospace,Menlo,monospace;background:#fff;border:1px solid var(--line);border-radius:8px;padding:3px 8px}
+.copy{margin-left:8px;border:1px solid var(--line);background:#fff;border-radius:99px;font:600 11px Inter;padding:5px 11px;cursor:pointer;min-height:30px}
+.tip{margin:14px 4px 0;font-size:13px;color:var(--mute)}
+.vidw video{display:block;width:100%;aspect-ratio:16/9;border-radius:14px;background:#e4e8f1}
+.slide h1[tabindex="-1"]:focus,.slide h2[tabindex="-1"]:focus{outline:none}
+.vidw wistia-player{display:block;border-radius:14px;overflow:hidden}
+.vidw wistia-player:not(:defined){background:#e4e8f1 center/contain no-repeat url(https://fast.wistia.com/embed/medias/hafq5l56nd/swatch);display:block;padding-top:56.25%;border-radius:14px}
+.rd{margin-top:14px}.rd summary{cursor:pointer;font:600 14px Inter;padding:10px 4px;min-height:44px;display:flex;align-items:center}
+.rd summary::after{content:"+";margin-left:10px;color:var(--acc);font-size:18px}
+
+/* done */
+.done ul{list-style:none;padding:0;margin:26px auto 0;max-width:440px;text-align:left}
+.done li{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.done li i{flex:none;width:24px;height:24px;border-radius:50%;background:var(--acc);display:grid;place-items:center}
+
+@media (max-width:860px){
+  .two{grid-template-columns:minmax(0,1fr);gap:26px}
+  .slide{align-items:start;align-content:start;padding:76px 20px 110px}
+  .card{padding:8px;border-radius:12px}.card.ad{width:92px}.card.txt,.card.pipe{width:148px}
+  .card small{font-size:8px;margin-bottom:4px}.msg{font-size:10.5px;padding:7px 8px}.lp .h{font-size:15px}.pipe div{font-size:10px;padding:4px 0}
+  .tag{font-size:9px;padding:3px 7px;right:-6px;bottom:10px}
+  .slide.build{align-content:center;align-items:center}
+  .build .mid h2{font-size:clamp(36px,10.5vw,46px)}
+  .build .mid .lead{font-size:15px}
+  .bar{background:linear-gradient(rgba(228,232,241,0),rgba(228,232,241,.94) 45%)}
+  .rail{display:flex;flex-direction:row;left:18px;top:16px;bottom:auto;gap:8px}
+  .rail .wm{writing-mode:horizontal-tb;font-size:12px}
+  .rail svg{width:22px;height:22px}
+  .slide.intro{align-items:end;align-content:end;padding-bottom:120px}
+  .intro .orb{left:50%;top:36%;width:min(80vw,46vh)}
+  .intro h1{font-size:clamp(48px,14vw,64px)}
+  .slide.done{align-content:center}
+  .slide.simple{align-content:center;align-items:center}
+  .simple .center{width:100%}
+  .simple h2{font-size:clamp(40px,11.5vw,52px)}
+  .simple .nos{font-size:clamp(34px,9.6vw,44px);line-height:1.2;margin-top:30px}
+  .simple .mark{width:52px;height:52px;margin-bottom:16px}
+  .simple .kick{margin-bottom:12px}
+  .panel iframe{height:66vh}
+  .top{right:16px;top:18px}
+  .bar{padding:12px max(14px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+  .btn{padding:0 16px}
+}
+@media (max-width:560px){.dots b{width:14px}.snd{font-size:10px;letter-spacing:.12em}.btn{min-height:44px;padding:0 16px;font-size:11px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="mesh" aria-hidden="true">
+  <i style="width:60vw;height:60vw;left:-12vw;top:-18vh;background:#cfd6ea;--t:38s;--x:10vw;--y:8vh"></i>
+  <i style="width:48vw;height:48vw;right:-6vw;top:-10vh;background:#f7f8fb;--t:31s;--x:-8vw;--y:10vh"></i>
+  <i style="width:55vw;height:55vw;left:20vw;bottom:-30vh;background:#b7c2dc;--t:42s;--x:-6vw;--y:-8vh"></i>
+  <i style="width:40vw;height:40vw;right:4vw;bottom:-12vh;background:#eef0f6;--t:34s;--x:-10vw;--y:-4vh"></i>
+  <i style="width:30vw;height:30vw;left:6vw;top:42vh;background:#dfe4f0;--t:28s;--x:12vw;--y:-10vh"></i>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="rail" aria-hidden="true">
+  <svg width="30" height="30" viewBox="0 0 100 100"><text x="50" y="80" text-anchor="middle" font-family="Cormorant Garamond,serif" font-weight="600" font-size="82" fill="#14161c">I</text><path d="M14 88 C40 84,60 66,80 28" fill="none" stroke="#e4e8f1" stroke-width="9" stroke-linecap="round"/><path d="M14 88 C40 84,60 66,80 28" fill="none" stroke="#14161c" stroke-width="3.2" stroke-linecap="round"/><path d="M70.2 33.8 L80 28 L80.9 39.2" fill="none" stroke="#14161c" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span class="wm">IMPERIAL</span>
+</div>
+<div class="top" id="top" hidden><span id="stepTxt">Step 1 of 5</span><span class="dots" id="dots"><b></b><b></b><b></b><b></b><b></b></span></div>
+
+<main class="stage" id="stage">
+
+  <!-- 0 · welcome -->
+  <section class="slide intro" data-next="Begin setup">
+    <div class="orb" aria-hidden="true"></div>
+    <div style="position:relative;z-index:2;max-width:1240px;width:100%;margin:0 auto">
+      <h1 data-r>Welcome to <em>Imperial</em> Growth.</h1>
+      <p class="lead" data-r style="--d:2">Let’s set up your growth system. Five short steps, about ten minutes.</p>
+    </div>
+  </section>
+
+  <!-- 1 · simple -->
+  <section class="slide simple" data-next="Let’s go">
+    <div class="center" style="position:relative;z-index:2">
+      <svg class="mark" data-r width="44" height="44" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="none" stroke="#14161c" stroke-width="2"/><text x="50" y="74" text-anchor="middle" font-family="Cormorant Garamond,serif" font-weight="600" font-size="62" fill="#14161c">I</text></svg>
+      <p class="kick" data-r style="--d:.5;color:var(--mute)">Before we start</p>
+      <h2 data-r style="--d:1">Your setup is simple:</h2>
+      <ul class="nos">
+        <li data-r style="--d:3"><b>No</b> long forms</li>
+        <li data-r style="--d:4"><b>No</b> tech headaches</li>
+        <li data-r style="--d:5"><b>No</b> guesswork</li>
+        <li data-r style="--d:6"><b>No</b> shared leads</li>
+        <li data-r style="--d:7" class="blur"><b>No</b> waiting around</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 2 · what we build -->
+  <section class="slide build" data-next="Start step 1">
+    <div class="float" aria-hidden="true" id="orbit">
+      <div class="card ad" data-a="210" style="--t:8s"><img src="/onboarding-assets/ad-1.jpg" alt=""><span class="tag">Your ads</span></div>
+      <div class="card txt" data-a="268" style="--t:7s"><small>Instant text</small><div class="msg">Hi Sarah, thanks for reaching out! We’ll call you in a few minutes.</div></div>
+      <div class="card ad" data-a="326" style="--t:9s"><img src="/onboarding-assets/ad-2.jpg" alt=""></div>
+      <div class="card txt pipe" data-a="28" style="--t:12s"><small>Pipeline</small><div><span>New</span><b>12</b></div><div><span>Called</span><b>9</b></div><div><span>Booked</span><b>4</b></div></div>
+      <div class="card txt lp" data-a="92" style="--t:11s"><small>Landing page</small><div class="h">Get your free estimate</div><div class="ln"></div><div class="ln" style="width:70%"></div><div class="cta"></div></div>
+      <div class="card ad" data-a="150" style="--t:10s"><img src="/onboarding-assets/ad-3.jpg" alt=""></div>
+    </div>
+    <div class="center mid">
+      <h2 data-r>Here’s what we’re about to <em>build</em> for you.</h2>
+      <p class="lead" data-r style="--d:2;margin-inline:auto">Ads, a landing page, an instant text to every lead and a pipeline to track it all. You just answer the phone.</p>
+      <p class="note" data-r style="--d:3;margin-top:14px">Example ads shown</p>
+    </div>
+  </section>
+
+  <!-- 3 · agreement -->
+  <section class="slide" data-step="1" data-next="Next step">
+    <div class="two">
+      <div>
+        <p class="kick" data-r>Step 1 of 5</p>
+        <h2 data-r style="--d:1">Sign your <em>agreement.</em></h2>
+        <p class="lead" data-r style="--d:2">It’s the same agreement we went over on the call. Read it, sign it right here, and you’re in.</p>
+      </div>
+      <div class="glass panel" data-r style="--d:2">
+        <div id="contractBox"></div>
+        <div class="out"><span id="contractAlt"></span><button class="chk" data-done="1" type="button"><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>I’ve signed it</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · slack -->
+  <section class="slide" data-step="2" data-next="Next step">
+    <div class="two">
+      <div>
+        <p class="kick" data-r>Step 2 of 5</p>
+        <h2 data-r style="--d:1">Join your <em>Slack</em> channel.</h2>
+        <p class="lead" data-r style="--d:2">Check your email for an invite from <b>Slack</b> to join Imperial Growth. Click <b>Accept invitation</b> and you’re in your private channel with our team.</p>
+        <p class="lead" data-r style="--d:3;font-size:15px">No Slack yet? It’s free. The invite walks you through making an account. Stuck? Watch the 30-second video.</p>
+      </div>
+      <div class="glass panel" data-r style="--d:2">
+        <div id="slackVid" class="vidw"></div>
+        <details class="rd"><summary>Prefer to read the steps?</summary>
+        <ol class="ms">
+          <li><span>Open the email from <b>Slack</b> that says Imperial Growth invited you, then click <b>Accept invitation</b>.</span></li>
+          <li><span>New to Slack? Enter your <b>email</b> and click <b>Continue</b>.</span></li>
+          <li><span>Slack emails you a <b>6-digit code</b>. Type it in.</span></li>
+          <li><span>Name your Slack after your <b>business</b>. It’s free.</span></li>
+          <li><span>Click <b>Accept</b> to join your channel. Then get the <b>Slack app</b> on your phone and turn on notifications.</span></li>
+        </ol>
+        <p class="tip">No email from Slack? Check your spam folder, or message us and we’ll resend it.</p>
+        </details>
+        <div class="out" style="justify-content:flex-end"><button class="chk" data-done="2" type="button"><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>I’ve joined</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · tally -->
+  <section class="slide" data-step="3" data-next="Next step">
+    <div class="two">
+      <div>
+        <p class="kick" data-r>Step 3 of 5</p>
+        <h2 data-r style="--d:1">Tell us about your <em>business.</em></h2>
+        <p class="lead" data-r style="--d:2">Nine quick questions, about three minutes. Your answers decide who sees your ads and what they say.</p>
+      </div>
+      <div class="glass panel" data-r style="--d:2">
+        <div id="formBox"></div>
+        <div class="out"><span>Trouble loading? <a id="formAlt" href="#" target="_blank" rel="noopener">Open the form in a new tab</a></span><button class="chk" data-done="3" type="button"><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>I’ve sent it</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · meta access -->
+  <section class="slide" data-step="4" data-next="Next step">
+    <div class="two">
+      <div>
+        <p class="kick" data-r>Step 4 of 5</p>
+        <h2 data-r style="--d:1">Give us access to your <em>ad account.</em></h2>
+        <p class="lead" data-r style="--d:2">Watch this short video and follow along. Your ad account stays yours. You’re just letting us run it.</p>
+        <p class="lead" data-r style="--d:3;font-size:15px">Already did this with us on the call? Skip ahead. Stuck? No stress, save it for our call and we’ll do it together.</p>
+      </div>
+      <div class="glass panel" data-r style="--d:2">
+        <div id="metaVid" class="vidw"></div>
+        <details class="rd"><summary>Prefer to read the steps?</summary>
+        <ol class="ms">
+          <li><span>On a computer, open <b>business.facebook.com/settings</b> and pick your business.</span></li>
+          <li><span>In the menu, go to <b>Users → Partners</b>, click <b>Add</b>, then <b>Give a partner access to your assets</b>.</span></li>
+          <li><span>Enter our business ID: <code id="bmId">Business ID coming</code><button class="copy" id="copyId" type="button">Copy</button></span></li>
+          <li><span>Pick your <b>ad account</b> and turn on <b>full control</b>. Add your <b>Facebook Page</b> and <b>dataset (pixel)</b> too, if you have them.</span></li>
+          <li><span>Click <b>Assign assets</b>. That’s it. We’ll confirm in Slack.</span></li>
+        </ol>
+        <p class="tip">No Meta business account yet? Go to <b>business.facebook.com</b>, click <b>Create a business portfolio</b>, then in settings go to <b>Accounts → Ad accounts → Add → Create a new ad account</b>. Then do the steps above.</p>
+        <p class="tip">Don’t see Partners? You need to be an admin of your business portfolio. Ask whoever set it up, or save it for our call.</p>
+        </details>
+        <div class="out" style="justify-content:flex-end"><button class="chk" data-done="4" type="button"><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Access given</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · scheduler -->
+  <section class="slide" data-step="5" data-next="Finish">
+    <div class="two">
+      <div>
+        <p class="kick" data-r>Step 5 of 5</p>
+        <h2 data-r style="--d:1">Book your <em>kickoff</em> call.</h2>
+        <p class="lead" data-r style="--d:2">Pick a time that works. We’ll walk you through your ads before anything goes live.</p>
+      </div>
+      <div class="glass panel" data-r style="--d:2">
+        <div id="calBox"></div>
+        <div class="out"><span id="calAlt"></span><button class="chk" data-done="5" type="button"><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Booked</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · done -->
+  <section class="slide done" data-next="">
+    <div class="center" style="position:relative;z-index:2">
+      <div class="orb sm" aria-hidden="true"></div>
+      <h1 data-r>You’re all <em>set.</em></h1>
+      <p class="lead" data-r style="--d:1;margin-inline:auto">We’ll take it from here.</p>
+      <ul>
+        <li data-r style="--d:2"><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>We start building your ads and landing page.</li>
+        <li data-r style="--d:3"><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Drafts land in Slack for your approval.</li>
+        <li data-r style="--d:4"><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>We go over everything on your kickoff call.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<div class="bar">
+  <button class="snd" id="snd" type="button" aria-pressed="false"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="t">SOUND</span></button>
+  <div class="acts">
+    <button class="btn ghost" id="back" type="button" hidden>‹ Back</button>
+    <button class="btn fill" id="next" type="button">Begin setup <span aria-hidden="true">›</span></button>
+  </div>
+</div>
+
+<script>
+{
+/* ── Fill these in. Empty values show a tidy placeholder. ── */
+const CONFIG = {
+  contractEmbed: "",   // embed URL from PandaDoc / DocuSign / SignWell etc.
+  contractLink:  "",   // normal link to the same agreement (opens in a new tab)
+  slackVideoWistia:"hafq5l56nd", // Wistia media ID for the "join Slack" video
+  tallyId:       "gbGWqJ",
+  metaBusinessId:"",   // Imperial Growth's Meta business portfolio ID
+  metaVideoWistia:"",  // optional Wistia media ID for the Meta access video
+  metaVideoUrl:  "https://files.leadconnectorhq.com/file/6b0a153897aa287f9363b70b/imperial-meta-access.mp4",
+  schedulerUrl:  "https://api.leadconnectorhq.com/widget/booking/XY2MIiFinpZ0nEaaRudb"    // GHL booking calendar
+};
+
+const $ = s => document.querySelector(s);
+const slides = [...document.querySelectorAll('.slide')];
+const nextB = $('#next'), backB = $('#back'), sndB = $('#snd');
+let cur = 0, done = new Set(), audioOn = true;
+/* always open on the welcome screen; remember only each client's checkmarks */
+const KEY = 'ig-onb:' + (new URLSearchParams(location.search).get('n') || '') + ':' + (location.search.split('c=')[1] || '').slice(-24);
+try { const s = JSON.parse(localStorage.getItem(KEY) || '{}'); if (s.done) done = new Set(s.done); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ done: [...done] })); } catch (e) {} };
+
+/* embeds */
+function frame(box, url, title) {
+  const f = document.createElement('iframe');
+  f.src = url; f.title = title; f.loading = 'lazy'; f.allow = 'clipboard-write'; box.appendChild(f);
+}
+function empty(box, head, sub) {
+  box.innerHTML = '<div class="empty"><div><b></b><span></span></div></div>';
+  box.querySelector('b').textContent = head; box.querySelector('span').textContent = sub;
+}
+function link(el, url, text) {
+  if (!url) { el.textContent = ''; return; }
+  el.textContent = 'Trouble loading? ';
+  const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; el.appendChild(a);
+}
+/* per-client link: ...?n=Sarah&c=<GHL contract link>   (keep c= last; the link can be pasted as-is) */
+const qs = location.search || '';
+const P = new URLSearchParams(qs);
+const raw = qs.indexOf('c=') > -1 ? qs.slice(qs.indexOf('c=') + 2) : '';
+let clientContract = '';
+try { clientContract = decodeURIComponent(raw); } catch (e) { clientContract = raw; }
+/* Only frame agreement links from trusted hosts, so ?c= can't put another site inside this page. */
+const CONTRACT_HOSTS = ['leadconnectorhq.com', 'gohighlevel.com', 'msgsndr.com', 'imperialgrowth.co'];
+try {
+  const h = new URL(clientContract).hostname.toLowerCase();
+  if (new URL(clientContract).protocol !== 'https:' || !CONTRACT_HOSTS.some(d => h === d || h.endsWith('.' + d))) clientContract = '';
+} catch (e) { clientContract = ''; }
+const clientName = (P.get('n') || '').replace(/[^\p{L}\p{M}' -]/gu, '').trim().slice(0, 30);
+if (clientName) { const h = $('.intro h1'); h.textContent = ''; h.append('Welcome, ' + clientName + '. '); const em = document.createElement('em'); em.textContent = 'Let’s grow.'; h.appendChild(em); }
+const contractUrl = clientContract || CONFIG.contractEmbed;
+const contractOpen = clientContract || CONFIG.contractLink || CONFIG.contractEmbed;
+if (contractUrl) frame($('#contractBox'), contractUrl, 'Agreement');
+else empty($('#contractBox'), 'Your agreement goes here.', 'We’ll send it to you to sign.');
+if (contractOpen) {
+  const el = $('#contractAlt'); el.textContent = 'Not loading? ';
+  const a = document.createElement('a'); a.href = contractOpen; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open it to sign'; el.appendChild(a);
+}
+const formUrl = 'https://tally.so/r/' + CONFIG.tallyId;
+frame($('#formBox'), 'https://tally.so/embed/' + CONFIG.tallyId + '?alignLeft=1&hideTitle=1&transparentBackground=1', 'Tell us about your business');
+$('#formAlt').href = formUrl;
+if (CONFIG.schedulerUrl) {
+  frame($('#calBox'), CONFIG.schedulerUrl, 'Book your kickoff call');
+  const cf = $('#calBox iframe'); cf.id = 'XY2MIiFinpZ0nEaaRudb_ig'; cf.allow = 'payment'; cf.loading = 'eager'; /* scrolls inside its box so it never pushes the page */
+}
+else empty($('#calBox'), 'Your calendar goes here.', 'Booking link coming.');
+link($('#calAlt'), CONFIG.schedulerUrl, 'Open the calendar');
+function wistia(box, id) {
+  if (!document.querySelector('script[src="https://fast.wistia.com/player.js"]')) { const sc = document.createElement('script'); sc.src = 'https://fast.wistia.com/player.js'; sc.async = true; document.head.appendChild(sc); }
+  const sm = document.createElement('script'); sm.src = 'https://fast.wistia.com/embed/' + id + '.js'; sm.type = 'module'; sm.async = true; document.head.appendChild(sm);
+  const wp = document.createElement('wistia-player'); wp.setAttribute('media-id', id); wp.setAttribute('aspect', '1.7777777777777777'); box.appendChild(wp);
+  wp.addEventListener('play', () => { A.duck = true; setVol(); }); wp.addEventListener('pause', () => { A.duck = false; setVol(); }); wp.addEventListener('end', () => { A.duck = false; setVol(); });
+}
+if (CONFIG.slackVideoWistia) wistia($('#slackVid'), CONFIG.slackVideoWistia);
+{
+  const box = $('#metaVid');
+  if (CONFIG.metaVideoWistia) {
+    const sc = document.createElement('script'); sc.src = 'https://fast.wistia.com/player.js'; sc.async = true; document.head.appendChild(sc);
+    const sm = document.createElement('script'); sm.src = 'https://fast.wistia.com/embed/' + CONFIG.metaVideoWistia + '.js'; sm.type = 'module'; document.head.appendChild(sm);
+    const wp = document.createElement('wistia-player'); wp.setAttribute('media-id', CONFIG.metaVideoWistia); wp.setAttribute('aspect', '1.7777777777777777'); box.appendChild(wp);
+  } else {
+    const v = document.createElement('video'); v.src = CONFIG.metaVideoUrl || 'meta-access.mp4'; v.controls = true; v.playsInline = true; v.preload = 'metadata'; v.poster = '/onboarding-assets/meta-video-poster.jpg'; box.appendChild(v);
+    v.addEventListener('play', () => { A.duck = true; setVol(); }); v.addEventListener('pause', () => { A.duck = false; setVol(); }); v.addEventListener('ended', () => { A.duck = false; setVol(); });
+  }
+}
+if (CONFIG.metaBusinessId) $('#bmId').textContent = CONFIG.metaBusinessId; else $('#copyId').hidden = true;
+
+/* sound: built live with Web Audio, nothing to download */
+const A = { ctx: null };
+function audio() {
+  if (A.ctx) return;
+  try {
+    const C = window.AudioContext || window.webkitAudioContext; const ctx = new C(); A.ctx = ctx;
+    A.out = ctx.createGain(); A.out.gain.value = 0; A.out.connect(ctx.destination);
+    const d = ctx.createDelay(1); d.delayTime.value = .28; const fb = ctx.createGain(); fb.gain.value = .32; const lp = ctx.createBiquadFilter(); lp.frequency.value = 2600;
+    d.connect(lp); lp.connect(fb); fb.connect(d); lp.connect(A.out); A.fx = d;
+    const pf = ctx.createBiquadFilter(); pf.type = 'lowpass'; pf.frequency.value = 700; pf.Q.value = .6; const pg = ctx.createGain(); pg.gain.value = .5; pf.connect(pg); pg.connect(A.out);
+    const lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = .05; lg.gain.value = 260; lfo.connect(lg); lg.connect(pf.frequency); lfo.start();
+    A.voices = [87.31, 174.61, 220, 261.63, 329.63].map((f, i) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = i ? 'sine' : 'triangle'; o.frequency.value = f; o.detune.value = (i % 2 ? 5 : -5); g.gain.value = i ? .035 : .05; o.connect(g); g.connect(pf); o.start(); return o; });
+    const chords = [[87.31, 174.61, 220, 261.63, 329.63], [73.42, 146.83, 220, 261.63, 349.23], [110, 164.81, 220, 261.63, 329.63], [65.41, 130.81, 196, 246.94, 329.63]];
+    let ci = 0; setInterval(() => { ci = (ci + 1) % chords.length; A.voices.forEach((o, i) => o.frequency.setTargetAtTime(chords[ci][i], ctx.currentTime, 1.6)); }, 9000);
+    setVol();
+  } catch (e) { A.ctx = null; }
+}
+function setVol() { if (A.ctx) A.out.gain.setTargetAtTime(audioOn ? (A.duck ? .05 : .8) : 0, A.ctx.currentTime, .5); sndB.classList.toggle('on', audioOn); sndB.setAttribute('aria-pressed', String(audioOn)); }
+function tone(f, t, v, len) {
+  const c = A.ctx; if (!c || !audioOn) return;
+  [[1, v], [2.01, v * .22], [3.98, v * .06]].forEach(([m, g0]) => { const o = c.createOscillator(), g = c.createGain(); o.frequency.value = f * m; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(g0, t + .006); g.gain.exponentialRampToValueAtTime(.0001, t + len); o.connect(g); g.connect(A.out); g.connect(A.fx); o.start(t); o.stop(t + len + .05); });
+}
+function whoosh() {
+  const c = A.ctx; if (!c || !audioOn) return; const t = c.currentTime;
+  const b = c.createBuffer(1, c.sampleRate * .9, c.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = b; f.type = 'bandpass'; f.Q.value = .9;
+  f.frequency.setValueAtTime(320, t); f.frequency.exponentialRampToValueAtTime(2600, t + .6);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.07, t + .18); g.gain.exponentialRampToValueAtTime(.0001, t + .85);
+  s.connect(f); f.connect(g); g.connect(A.out); s.start(t);
+}
+/* sound is always on: start it now, and wake it on the very first tap, click, swipe or key (browsers need one) */
+audioOn = true; audio(); setVol();
+window.__igSound = () => [A.ctx ? A.ctx.state : 'none', audioOn];
+const wake = () => { audio(); if (A.ctx && A.ctx.state !== 'running') { A.justWoke = true; setTimeout(() => A.justWoke = false, 600); } if (A.ctx && A.ctx.state !== 'running') A.ctx.resume().then(setVol).catch(() => {}); if (A.ctx && A.ctx.state === 'running') ['pointerdown','touchstart','keydown','click'].forEach(ev => document.removeEventListener(ev, wake, true)); };
+['pointerdown','touchstart','keydown','click'].forEach(ev => document.addEventListener(ev, wake, true));
+const NOTES = [698.46, 783.99, 880, 1046.5, 1174.66, 1396.91, 1567.98, 1760, 2093];
+const chime = i => { if (!A.ctx) return; const t = A.ctx.currentTime + .08; tone(NOTES[i % NOTES.length], t, .05, 1.8); tone(NOTES[(i + 2) % NOTES.length], t + .11, .035, 1.6); };
+const tick = () => { if (A.ctx && audioOn) tone(1760, A.ctx.currentTime, .012, .09); };
+const success = () => { if (!A.ctx) return; const t = A.ctx.currentTime; [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => tone(f, t + i * .09, .045, 2)); };
+
+
+/* orbit: cards spiral in from the centre, then keep slowly circling */
+const orbitEl = $('#orbit'), oc = [...orbitEl.querySelectorAll('.card')];
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let oStart = 0, oRun = false;
+function orbit(ts) {
+  if (!oRun) return;
+  if (!oStart) oStart = ts;
+  const t = (ts - oStart) / 1000, W = orbitEl.clientWidth, H = orbitEl.clientHeight, mob = W < 860;
+  const p = still ? 1 : Math.min(1, t / 2.2), e = 1 - Math.pow(1 - p, 3);
+  const spin = (still ? 0 : t * 0.07) + (1 - e) * 3.2;
+  const rx = W * (mob ? .33 : .41), ry = H * (mob ? .39 : .37), cx = W / 2, cy = H * (mob ? .5 : .5);
+  oc.forEach(c => {
+    const a = (+c.dataset.a) * Math.PI / 180 + spin, s = Math.sin(a), depth = (s + 1) / 2;
+    const x = cx + Math.cos(a) * rx * e - c.offsetWidth / 2, y = cy + s * ry * e - c.offsetHeight / 2;
+    const sc = (.25 + .75 * e) * (.86 + .22 * depth);
+    c.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${sc.toFixed(3)}) rotate(${((1 - e) * -40).toFixed(1)}deg)`;
+    let op = 1;
+    if (mob) { const mid = orbitEl.parentElement.querySelector('.mid'), half = mid.offsetHeight / 2 + 10, dy = Math.abs(y + c.offsetHeight / 2 - cy) - c.offsetHeight / 2; op = Math.max(.1, Math.min(1, (dy - half + 40) / 60)); }
+    c.style.opacity = (e * op).toFixed(3);
+    c.style.zIndex = mob ? 1 : (depth > .5 ? 3 : 1);
+  });
+  requestAnimationFrame(orbit);
+}
+function orbitState() { const on = slides[cur].classList.contains('build'); if (on && !oRun) { oRun = true; oStart = 0; requestAnimationFrame(orbit); } if (!on) oRun = false; }
+
+/* flow */
+function render(prev) {
+  slides.forEach((s, i) => { s.classList.toggle('on', i === cur); s.classList.toggle('gone', i < cur); s.setAttribute('aria-hidden', String(i !== cur)); });
+  const s = slides[cur], st = s.dataset.step, lab = s.dataset.next;
+  $('#top').hidden = !st;
+  if (st) $('#stepTxt').textContent = 'Step ' + st + ' of 5';
+  [...document.querySelectorAll('#dots b')].forEach((b, i) => { b.classList.toggle('on', String(i + 1) === st); b.classList.toggle('ok', done.has(String(i + 1)) && String(i + 1) !== st); });
+  document.querySelectorAll('.chk').forEach(c => c.classList.toggle('ok', done.has(c.dataset.done)));
+  backB.hidden = cur === 0;
+  nextB.hidden = !lab; nextB.innerHTML = (lab || '') + ' <span aria-hidden="true">›</span>';
+  if (prev !== undefined && prev !== cur) { whoosh(); chime(cur); }
+  if (cur === slides.length - 1 && prev !== undefined && prev !== cur) setTimeout(success, 500);
+  orbitState();
+  save();
+}
+function go(n) { const p = cur; cur = Math.max(0, Math.min(slides.length - 1, n)); render(p); const f = slides[cur].querySelector('h1,h2'); if (f) { f.setAttribute('tabindex', '-1'); f.focus({ preventScroll: true }); } }
+nextB.addEventListener('click', () => { audio(); go(cur + 1); });
+backB.addEventListener('click', () => go(cur - 1));
+sndB.addEventListener('click', () => { if (A.justWoke) { tick(); return; } if (!A.ctx) { audioOn = true; audio(); } else { audioOn = !audioOn; setVol(); } tick(); });
+document.querySelectorAll('.btn,.chk,.copy').forEach(b => b.addEventListener('pointerenter', tick));
+document.querySelectorAll('.chk').forEach(c => c.addEventListener('click', () => { const k = c.dataset.done; if (done.has(k)) done.delete(k); else { done.add(k); audio(); success(); } render(); }));
+$('#copyId').addEventListener('click', async e => { try { await navigator.clipboard.writeText(CONFIG.metaBusinessId); e.target.textContent = 'Copied'; tick(); } catch (err) { e.target.textContent = 'Select it'; } setTimeout(() => e.target.textContent = 'Copy', 1800); });
+document.addEventListener('keydown', e => { if (e.target.closest('input,textarea')) return; if (e.key === 'ArrowRight' && !nextB.hidden) { audio(); go(cur + 1); } if (e.key === 'ArrowLeft' && cur > 0) go(cur - 1); });
+window.addEventListener('message', e => { const d = typeof e.data === 'string' ? e.data : ''; if (d.includes('Tally.FormSubmitted')) { done.add('3'); success(); render(); } });
+let sx = 0, sy = 0;
+document.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.6) { if (dx < 0 && !nextB.hidden) { audio(); go(cur + 1); } else if (dx > 0 && cur > 0) go(cur - 1); } }, { passive: true });
+render();
+}
+</script>
+</body>
+</html>
